@@ -7,7 +7,7 @@ from langchain.prompts import PromptTemplate
 # Define constants
 MAX_FILE_SIZE_MB = 5  # Maximum allowed file size in MB
 MAX_PAGES = 5  # Maximum allowed number of pages in the PDF
-MODEL_NAME="gpt-3.5-turbo"
+MODEL_NAME="gpt-4"
 TEMPRATURE=0.0
 
 def extract_text_from_pdf(pdf_path: str) -> str:
