@@ -42,5 +42,32 @@ def log_interaction(prompt, response, fpath='./responses.log'):
         except Exception as e:
             print(f"An error occurred while creating the file: {str(e)}")
 
+RED = '\033[91m'
+ORANGE = '\033[93m'
+GREEN = '\033[92m'
+PURPLE = '\033[95m'
+YELLOW = '\033[93m'
+RESET = '\033[0m'
+
+def color_text(text, color_code):
+    return f"{color_code}{text}{RESET}"
+
+def get_multiline_input(prompt):
+    print(color_text(prompt, GREEN))
+    lines = []
+    while True:
+        try:
+            line = input()
+            if line.strip() == 'END':
+                break
+            lines.append(line)
+        except KeyboardInterrupt:
+            print(color_text("\nInput interrupted. Proceeding with the entered text.", GREEN))
+            break
+    return '\n'.join(lines)
+
+
 if __name__ == "__main__":
     print(get_saved_info())
+
+

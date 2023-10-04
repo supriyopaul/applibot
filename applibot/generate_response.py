@@ -15,37 +15,22 @@ from templates import (
     COVER_LETTER_OUTPUT_TEMPLATE
 )
 from utils.misc import (
-    get_resume, get_saved_info, log_interaction
+    get_resume,
+    get_saved_info,
+    log_interaction,
+    RED,
+    ORANGE,
+    GREEN,
+    PURPLE,
+    YELLOW,
+    RESET,
+    color_text,
+    get_multiline_input,
 )
 
 MODEL_NAME = "gpt-4"
 TEMPERATURE = 0.0
 llm = ChatOpenAI(model=MODEL_NAME)
-
-# ANSI color codes
-RED = '\033[91m'
-ORANGE = '\033[93m'
-GREEN = '\033[92m'
-PURPLE = '\033[95m'
-YELLOW = '\033[93m'
-RESET = '\033[0m'
-
-def color_text(text, color_code):
-    return f"{color_code}{text}{RESET}"
-
-def get_multiline_input(prompt):
-    print(color_text(prompt, GREEN))
-    lines = []
-    while True:
-        try:
-            line = input()
-            if line.strip() == 'END':
-                break
-            lines.append(line)
-        except KeyboardInterrupt:
-            print(color_text("\nInput interrupted. Proceeding with the entered text.", GREEN))
-            break
-    return '\n'.join(lines)
 
 def get_eoi_dm(job_description, resume, additional_info):
     eoi_dm_generation_prompt = f"{INPUT}\n{EOI_DM_INITIATION_INSTRUCTIONS}\n{EOI_DM_INITIATION_OUTPUT_TEMPLATE}"
@@ -127,6 +112,7 @@ def main():
     
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('--summary', action='store_true', help='Call get_job_summary() function')
+    group.add_argument('--cover-letter', action='store_true', help='Call get_cover_letter() function')
     group.add_argument('--email', action='store_true', help='Call get_eoi_email() function')
     group.add_argument('--dm', action='store_true', help='Call get_eoi_dm() function')
     group.add_argument('--reply', action='store_true', help='Call get_eoi_dm_reply() function')

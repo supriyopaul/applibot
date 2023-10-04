@@ -33,7 +33,7 @@ At the end ask questions that might answer the {{placeholders}}. Example: Expect
 EOI_DM_INITIATION_OUTPUT_TEMPLATE = """\
 following is the output format that must strictly be followed:
 =====Output start=====
-Hi {{Fisr name of Recruiter or Hiring Manager}},
+Hi {{Fist name of Recruiter or Hiring Manager}},
 {{Expression of interest}}
 {{Reasons applicant good match:}}
 * {{The main skill that I have in my resume and is also mentioned in the job description}}
@@ -161,19 +161,15 @@ following is the output format that must strictly be followed:
 =====Output start=====
 Dear {{Hiring Manager or Recruiter Name}},
 
-I am writing to express my interest in the {{Job Title}} position at {{Company Name}} as advertised. I believe that my unique blend of skills and experiences make me an ideal candidate for this role.
-
 {{Introduction Paragraph}}
 - Briefly introduce yourself and mention how you heard about the job opening.
 
 {{Why You’re a Good Fit}}
 - Detail why you are a good fit for this job, citing specific skills and experiences that align with the job description.
+- Keyword for skills releveant to the Job description
 
 {{Why You’re Interested in This Job}}
 - Explain why you are interested in this job and how it aligns with your career goals.
-
-{{Closing Paragraph}}
-- Express gratitude for consideration and enthusiasm about the possibility of an interview.
 
 Sincerely,
 {{Your Name}}
