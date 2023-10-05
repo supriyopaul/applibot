@@ -1,3 +1,6 @@
+import hashlib
+import re
+import os
 
 def get_resume(fpath='../../data/.myresume.txt'):
     try:
@@ -66,8 +69,25 @@ def get_multiline_input(prompt):
             break
     return '\n'.join(lines)
 
+def compute_sha256(text):
+    """Compute the SHA-256 hash of a given text."""
+    return hashlib.sha256(text.encode()).hexdigest()
 
-if __name__ == "__main__":
-    print(get_saved_info())
+def extract_output_block(text):
+    pattern = r'=====Output start=====(.*?)=====Output end====='
+    match = re.search(pattern, text, re.DOTALL)
+    if match:
+        return match.group(1).strip()
+    return None
 
+def read_text_file(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        return file.read()
 
+def save_to_file(content, directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    filename = os.path.join(directory, f"form_{len(os.listdir(directory)) + 1}.txt")
+    with open(filename, 'w') as f:
+        f.write(content)
+    print(color_text(f"Form saved to: {filename}", GREEN))

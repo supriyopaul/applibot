@@ -164,11 +164,11 @@ Dear {{Hiring Manager or Recruiter Name}},
 {{Introduction Paragraph}}
 - Briefly introduce yourself and mention how you heard about the job opening.
 
-{{Why You’re a Good Fit}}
+{{Why You're a Good Fit}}
 - Detail why you are a good fit for this job, citing specific skills and experiences that align with the job description.
 - Keyword for skills releveant to the Job description
 
-{{Why You’re Interested in This Job}}
+{{Why You're Interested in This Job}}
 - Explain why you are interested in this job and how it aligns with your career goals.
 
 Sincerely,
