@@ -1,0 +1,24 @@
+Advanced Technical & Project Inquiry
+
+Contact & Personal:
+Name: Richard Hendricks
+
+Emails:
+Primary: rhendricks@piedpiper.com
+Backup: richard.hendricks1985@gmail.com
+
+Current Frameworks:
+Main: Hadoop, Spark
+Secondary: React, Django
+
+Platforms Worked:
+
+Windows,
+macOS,
+Linux Distros (Primarily Ubuntu and CentOS)
+Favorite Coding Snack: Pretzels
+
+Notable Projects:
+
+Pied Piper Compression Algorithm: Achieved industry-leading compression rates.
+New Internet Concept: A decentralized internet platform, ensuring data privacy.

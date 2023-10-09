@@ -1,0 +1,16 @@
+Contacts (Professional & Personal)
+
+First Professional Reference
+Name: Dinesh Chugtai
+Company: Pied Piper
+Email: dinesh@piedpiper.com
+
+Second Professional Reference
+Name: Gilfoyle
+Affiliation: Pied Piper
+Contact Number: +1 555-654-3210
+
+In Case of Emergency Contact:
+Name: Jared Dunn
+Relationship: Close Friend & Advisor
+Phone: +1 555-789-0123

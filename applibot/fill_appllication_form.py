@@ -1,13 +1,10 @@
 import argparse
 import urllib3
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.embeddings.openai import OpenAIEmbeddings
-from utils.misc import (
+from applibot.utils.misc import (
     get_resume,
     RED,
     ORANGE,
@@ -19,7 +16,7 @@ from utils.misc import (
     extract_output_block,
 )
 
-from utils.form_utils import (
+from applibot.utils.form_utils import (
     FORM_TO_QUESTION_TEMPLATE,
     FILL_FORM_TEMPLATE,
     remove_question_prefix,
@@ -66,6 +63,7 @@ def chat_interface(resume, lancedb_path, lancedb_table_name, saved_forms_dir):
         additional_info = get_relevant_information(questions, db_path=lancedb_path, table=lancedb_table_name)
         answers = answer_form(empty_form, resume, additional_info)
         print(color_text(f"Filled up form:\n{answers}", GREEN))
+
         
         save_option = input(color_text("Save filled up form to file? (yes/no): ", ORANGE)).strip().lower()
         if save_option == 'yes':

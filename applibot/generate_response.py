@@ -2,7 +2,7 @@ import argparse
 import sys
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
-from templates import (
+from applibot.templates import (
     INPUT,
     EOI_DM_INITIATION_INSTRUCTIONS,
     EOI_EMAIL_INITIATION_INSTRUCTIONS,
@@ -14,7 +14,7 @@ from templates import (
     COVER_LETTER_INSTRUCTIONS,
     COVER_LETTER_OUTPUT_TEMPLATE
 )
-from utils.misc import (
+from applibot.utils.misc import (
     get_resume,
     get_saved_info,
     log_interaction,

@@ -1,0 +1,152 @@
+My Information
+Have you previously worked for TechSphere Innovations?
+No
+Legal Name
+Mr. Richard Hendricks
+I have a preferred name
+No
+Address
+324 Aviato Blvd,
+San Francisco, CA 94105
+USA
+Email
+rhendricks@piedpiper.com
+Phone
++1 555-321-9876 (Private Phone)
+
+My Experience
+
+Work Experience 1
+Job Title
+CEO & Founder
+Company
+Pied Piper
+Location
+San Francisco, CA
+I currently work here
+Yes
+From
+2014
+Role Description
+Founded and led the development of a revolutionary data compression algorithm. Navigated multiple business challenges, secured VC funding, and led a team of engineers.
+
+Work Experience 2
+Job Title
+Software Engineer
+Company
+Hooli
+Location
+San Francisco, CA
+I currently work here
+No
+From
+2012
+To
+2014
+Role Description
+Developed and maintained code for Nucleus, collaborated with cross-functional teams, and innovated new data compression methods.
+
+Work Experience 3
+Job Title
+Freelance Developer
+Company
+Self-Employed
+Location
+San Francisco, CA
+I currently work here
+No
+From
+2010
+To
+2012
+Role Description
+Worked on various freelance projects, specializing in back-end development and system design.
+
+Education 1
+School or University
+Stanford University
+Degree
+M.S.
+Field of Study
+Computer Science
+Overall Result (GPA)
+3.9
+From
+2010
+To (Actual or Expected)
+2012
+
+Education 2
+School or University
+California Institute of Technology (Caltech)
+Degree
+B.S.
+Field of Study
+Computer Science
+Overall Result (GPA)
+3.8
+From
+2006
+To (Actual or Expected)
+2010
+
+Languages 1
+Language
+English
+I am fluent in this language.
+Yes
+Overall
+Excellent
+
+Resume/CV
+Richard+Hendricks.pdf
+435.98 KB
+
+Websites 1
+URL
+https://github.com/rhendricks
+
+Websites 2
+URL
+https://piedpiper.com/richard
+
+Application Questions 1 of 2
+Have you applied to TechSphere Innovations before?
+No
+Would you be willing to relocate if the company required?
+Yes
+Do you have relatives or friends currently working with TechSphere Innovations?
+No
+Do you have the Right to work in the country where the job is located?
+Yes
+
+Application Questions 2 of 2
+Please confirm if you have a valid Aadhar card.
+No, I don't
+Please confirm if you have a valid PAN card.
+No, I don't
+I confirm that I am 18+ years of age
+Yes, I do
+
+Voluntary Disclosures
+Personal information
+Please specify your Gender
+Male
+Please specify your Date of Birth
+4/12/1985
+Please specify your Country of Birth
+USA
+Please specify your City of Birth
+San Francisco
+Please specify your Marital Status
+Single
+Please specify your Citizenship Status
+Citizen (USA)
+Please specify your Primary Nationality
+USA
+Please specify your Additional Nationalities
+No Response
+
+Terms and Conditions
+Yes, I confirm that I have read and understood the Privacy Policy.
+Yes

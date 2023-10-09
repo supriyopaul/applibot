@@ -9,7 +9,7 @@ from langchain.prompts import PromptTemplate
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.document_loaders import TextLoader
 from langchain.text_splitter import CharacterTextSplitter
-from .misc import compute_sha256, extract_output_block, read_text_file
+from applibot.utils.misc import compute_sha256, extract_output_block, read_text_file
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 MODEL_NAME = "gpt-4"
