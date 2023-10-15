@@ -1,18 +1,8 @@
 import datetime
 from fastapi import Query
 
-from applibot.utils.misc import compute_sha256
+from applibot.utils.misc import compute_sha256, extract_output_block
 from langchain.prompts import PromptTemplate
-from pydantic import BaseModel
-
-class Info(BaseModel):
-    text: str
-
-class Resume(BaseModel):
-    text: str
-
-class Question(BaseModel):
-    text: str
 
 INFO_FORMATTING_TEMPLATE = """
 From the given user information input, which may be poorly formatted, empty, or partially filled out:
@@ -81,9 +71,8 @@ class Applibot:
         self.resume_store = config.objects.resume_store
         self.info_store = config.objects.info_store
 
-    async def post_resume(self, resume: Resume):
+    async def post_resume(self, resume_text: str):
         """API to post a resume text."""
-        resume_text = resume.text
         data = {
             "vector": self.embedding.embed_query(resume_text),
             "text": resume_text,
@@ -108,17 +97,15 @@ class Applibot:
         self.resume_store.table.delete(f'id = "{resume_id}"')
         return {"status": "Resume deleted successfully"}
 
-    async def format_info(self, info: Info):
+    async def format_info(self, info_text: str):
         """API to format info"""
-        info_text = info.text
         form_formatting_template = PromptTemplate.from_template(INFO_FORMATTING_TEMPLATE)
         form_formatting_template = form_formatting_template.format(unformatted_info=info_text)
         formatted_form_text = self.llm.predict(form_formatting_template)
-        return formatted_form_text
+        return extract_output_block(formatted_form_text)
     
-    async def post_info(self, info: Info):
+    async def post_info(self, info_text: str):
         """API to post an info text."""
-        info_text = info.text
         info_id = compute_sha256(info_text)
         data = {
             "text": info_text,
@@ -126,16 +113,15 @@ class Applibot:
             "vector": self.embedding.embed_query(info_text),
         }
         self.info_store.table.add([data])
-        infos = self.info_store.table.to_pandas()
+        infos = self.info_store.table.to_pandas().drop(columns=['vector'])
         matching_info = infos[infos['id'] == info_id].iloc[0]
         return matching_info.to_dict()
 
-    async def get_info(self, question: Question, limit: int = Query(5, description="Limit to get the nearest k info docs")):
+    async def post_questions(self, question_text: str, limit: int = Query(5, description="Limit to get the nearest k info docs")):
         """API to retrieve info based on a query string."""
-        query_text = question.text
-        query_vector = self.embedding.embed_query(query_text)
-        results = self.info_store.table.search(query_vector).limit(limit).to_df()
-        return results.to_dict()
+        query_vector = self.embedding.embed_query(question_text)
+        results = self.info_store.table.search(query_vector).limit(limit).to_df().drop(columns=['vector']).to_dict(orient='records')
+        return results
 
     async def delete_info(self, info_id: str):
         """Delete an info based on its id."""
