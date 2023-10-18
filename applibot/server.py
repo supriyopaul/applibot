@@ -32,12 +32,29 @@ async def format_info_route(info_text: str = Form(...), applibot: Applibot = Dep
     return {"formatted_text": await applibot.format_info(info_text)}
 
 @app.post("/questions/")
-async def post_questions_route(question: str = Form(...), limit: int = Query(5), applibot: Applibot = Depends(get_applibot)):
-    return await applibot.post_questions(question, limit)
+async def post_questions_route(question: str = Form(...), applibot: Applibot = Depends(get_applibot)):
+    return await applibot.post_questions(question)
 
 @app.delete("/info/{info_id}/")
 async def delete_info_route(info_id: str, applibot: Applibot = Depends(get_applibot)):
     return await applibot.delete_info(info_id)
+
+@app.get("/info/")
+async def get_info_route(applibot: Applibot = Depends(get_applibot)):
+    return await applibot.get_all_info()
+
+@app.post("/cover-letter/")
+async def generate_cover_letter_route(job_description: str = Form(...), applibot: Applibot = Depends(get_applibot)):
+    return await applibot.generate_cover_letter(job_description)
+
+@app.post("/dm-reply/")
+async def dm_reply_route(dm: str = Form(...), job_description: str = Form(...), applibot: Applibot = Depends(get_applibot)):
+    return await applibot.reply_to_dm(dm, job_description)
+
+@app.post("/eoi/")
+async def generate_eoi_route(details: str = Form(...), applibot: Applibot = Depends(get_applibot)):
+    """Route to generate an Expression of Interest letter based on company/field details."""
+    return await applibot.generate_eoi(details)
 
 def main():
     parser = argparse.ArgumentParser(description='Run the resume server.')

@@ -34,13 +34,8 @@ class LanceDBStore:
         return pydantic_to_schema(model)
 
     def get_lance_db_table(self, db_path, table_name, schema):
-        # Connect to the database
         db = lancedb.connect(db_path)
-        
-        # Check if the table already exists, if not create it
         if table_name not in db.table_names():
             db.create_table(table_name, schema=schema)
-        
-        # Open the table and return the table object
         table = db.open_table(table_name)
         return table

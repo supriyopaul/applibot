@@ -74,11 +74,24 @@ def compute_sha256(text):
     return hashlib.sha256(text.encode()).hexdigest()
 
 def extract_output_block(text):
-    pattern = r'=====Output start=====(.*?)=====Output end====='
+    pattern = r'=====.*?start=====(.*?)=====.*?end====='
     match = re.search(pattern, text, re.DOTALL)
     if match:
         return match.group(1).strip()
     return None
+
+def check_formatted_info(text):
+    """Test the output formatting of the given text."""
+    lines = text.split('\n')
+    for line in lines:
+        if not line:  # Skip empty lines
+            continue
+        if ": " not in line:
+            return False, f"Line '{line}' does not contain ': '"
+        key, value = line.split(": ", 1)
+        if not key or not value:
+            return False, f"Line '{line}' does not have text on each side of ': '"
+    return True, "All lines are correctly formatted"
 
 def read_text_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
