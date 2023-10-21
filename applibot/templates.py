@@ -303,51 +303,59 @@ Based on the provided Recruiter's Direct Message:
 {dm}
 =====DM end=====
 Generate a response that addresses the recruiter's message while highlighting the applicant's fit for the mentioned position.
-The output should be within a well-defined block with placeholders for the recruiter's name, the applicant's name, and the reasons why the applicant is a good fit for the job.
-Your output should strictly follow the example provided below:
+The output should be within a well-defined block with placeholders for the applicant's name,
+and the answers to questions that the recruiter has asked (if any).
+Make the template so that it can be filled under 1000 characters.
+Rather than paragraphs make it bullet short points wherever you can.
+Do not include any unnecessary placeholders whose information wouldn't be relevant in making the Expression of Interest short, crisp and precise.
+Your output should inside the block as mentioned below:
 =====DM Response start=====
-
-[Place Recruiters' Opening Line, e.g., "Dear Mr. Smith," or "Hello Recruiting Team,"]
-
-Thank you for reaching out to me about the [Specific Job Title from the DM] position at [Company Name from the DM]. My name is [Applicant's Name], and I'm excited about the opportunity. Here's why I believe I would be a good fit:
-
-[Reason 1: e.g., "I have extensive experience in..."]
-[Reason 2: e.g., "My educational qualifications include..."]
-[Reason 3: e.g., "In my previous roles, I have..."]
-...
-[You can continue to add more reasons or bullet points as needed]
-
-I look forward to hearing from you soon. 
-
-Best regards,
-[Applicant's Name]
+Hi [Recruiter's name if present in DM],
+[Template for replying to the dm]
 =====DM Response end=====
 """
 
+DM_REPLY_FILL_TEMPLATE = """
+Given the provided template and user-provided information, generate a response:
+=====Response Template start=====
+{dm_reply_template}
+=====Response Template end=====
+From the user's information:
+=====Resume start=====
+{resume}
+=====Resume end=====
+=====Info start=====
+{info_text}
+=====Info end=====
+
+Use the resume and info text to fill in the placeholders within the response template.
+Do not lie about anything. Remove points for which information not present in the above resume and information. 
+Make sure to make it under 1000 characters. Short and precise.
+Rather than paragraphs make it bullet short points wherever you can.
+Your output should be:
+
+=====Response start=====
+[Filled up EOI template based on the provided user information]
+=====Response end=====
+"""
+
+
 EXPRESSION_OF_INTEREST_TEMPLATE = """
-Based on the provided company or field details:
-=====Company/Field Details start=====
-{details}
-=====Company/Field Details end=====
-Generate an Expression of Interest (EOI) template. The output should have placeholders for the recipient's name, the applicant's name, and the reasons why the applicant is interested in the company or field.
-Your output should strictly follow the example provided below:
+Based on the provided Job description:
+=====Job description start=====
+{job_description}
+=====Job description end=====
+Generate an Expression of Interest (EOI) template.
+The output should have placeholders for the applicant's name,
+reason why the applicant is interested in the company or field and reasons why applicant is a good fit.
+Make the template so that it can be filled under 1000 characters.
+Rather than paragraphs make it bullet short points wherever you can.
+Do not include any unnecessary placeholders whose information wouldn't be relevant in making the Expression of Interest short, crisp and precise.
+Your output should inside the block as mentioned below:
 =====Expression of Interest start=====
-
-[Place Recipient's Name, e.g., "Dear Mr. Smith," or "Hello HR Team,"]
-
-I am writing to express my keen interest in working with [Company Name or Field Name from the details]. My name is [Applicant's Name] and I have always been intrigued by [some specifics about the company or field].
-
-Here are some reasons why I am interested:
-
-[Reason 1: e.g., "Your company's pioneering work in... has always inspired me."]
-[Reason 2: e.g., "The recent innovations in the field of... resonate with my personal interests and aspirations."]
-...
-[You can continue to add more reasons or bullet points as needed]
-
-I am eager to learn about any opportunities that might align with my background and interests.
-
-Warm regards,
-[Applicant's Name]
+[Job role name as subject]
+Hi [Recruiter's name if in Job description],
+[Expression of Interest (EOI) template]
 =====Expression of Interest end=====
 """
 
@@ -365,12 +373,12 @@ From the user's information:
 =====Info end=====
 
 Use the resume and info text to fill in the placeholders within the EOI template.
-
+Do not lie about anything. Remove points for which information not present in the above resume and information. 
+Make sure to make it under 1000 characters. Short and precise.
+Rather than paragraphs make it bullet short points wherever you can.
 Your output should be:
 
-=====Filled Expression of Interest start=====
-
+=====Expression of Interest start=====
 [Filled up EOI template based on the provided user information]
-
 =====Expression of Interest end=====
 """

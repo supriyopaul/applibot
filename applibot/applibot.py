@@ -4,7 +4,10 @@ import asyncio
 from fastapi import Query
 from langchain.prompts import PromptTemplate
 from applibot.utils.misc import compute_sha256, extract_output_block, check_formatted_info
-from applibot.templates import QUESTION_EXTRACTION_TEMPLATE, QUESTION_RESPONSE_TEMPLATE, COVER_LETTER_TEMPLATE, COVER_LETTER_FILL_TEMPLATE, DM_REPLY_TEMPLATE, EXPRESSION_OF_INTEREST_TEMPLATE, EOI_FILL_TEMPLATE, INFO_FORMATTING_TEMPLATE
+from applibot.templates import (QUESTION_EXTRACTION_TEMPLATE, QUESTION_RESPONSE_TEMPLATE,
+                                COVER_LETTER_TEMPLATE, COVER_LETTER_FILL_TEMPLATE,
+                                DM_REPLY_TEMPLATE, EXPRESSION_OF_INTEREST_TEMPLATE,
+                                EOI_FILL_TEMPLATE, INFO_FORMATTING_TEMPLATE, DM_REPLY_FILL_TEMPLATE)
 
 def run(coro): return asyncio.get_event_loop().run_until_complete(coro)
 
@@ -22,7 +25,8 @@ class Applibot:
         self.cover_letter_template = PromptTemplate(input_variables=["job_description"], template=COVER_LETTER_TEMPLATE)
         self.cover_letter_fill_template = PromptTemplate(input_variables=["cover_template", "resume", "info_text"], template=COVER_LETTER_FILL_TEMPLATE)
         self.dm_reply_template = PromptTemplate(input_variables=["dm"], template=DM_REPLY_TEMPLATE)
-        self.expression_of_interest_template = PromptTemplate(input_variables=["details"], template=EXPRESSION_OF_INTEREST_TEMPLATE)
+        self.dm_reply_fill_template = PromptTemplate(input_variables=["dm_reply_template", "resume", "info_text"], template=DM_REPLY_FILL_TEMPLATE)
+        self.expression_of_interest_template = PromptTemplate(input_variables=["job_description"], template=EXPRESSION_OF_INTEREST_TEMPLATE)
         self.eoi_fill_template = PromptTemplate(input_variables=["eoi_template", "resume", "info_text"], template=EOI_FILL_TEMPLATE)
         self.info_formatting_template = PromptTemplate(input_variables=["unformatted_info"], template=INFO_FORMATTING_TEMPLATE)
 
@@ -137,18 +141,18 @@ class Applibot:
         query_vector = self.embedding.embed_query(dm_response_template)
         relevant_info_df = self.info_store.table.search(query_vector).limit(self.INFO_LIMIT).to_df()
         relevant_info_texts = '\n'.join(relevant_info_df['text'].tolist())
-        cover_letter_fill_prompt = self.cover_letter_fill_template.format(cover_template=dm_response_template, resume=latest_resume, info_text=relevant_info_texts)
-        print("Formatted Prompt for COVER_FILL_TEMPLATE:\n", cover_letter_fill_prompt)
-        dm_response = self.llm.predict(cover_letter_fill_prompt)
+        dm_reply_fill_prompt = self.dm_reply_fill_template.format(cover_template=dm_response_template, resume=latest_resume, info_text=relevant_info_texts)
+        print("Formatted Prompt for COVER_FILL_TEMPLATE:\n", dm_reply_fill_prompt)
+        dm_response = self.llm.predict(dm_reply_fill_prompt)
         print("LLM Prediction for COVER_FILL_TEMPLATE:\n", dm_response)
         return extract_output_block(dm_response)
     
-    async def generate_eoi(self, details: str):
+    async def generate_eoi(self, job_description: str):
         """API to generate an Expression of Interest letter based on company/field details."""
         resumes_df = self.resume_store.table.to_pandas()
         latest_resume = resumes_df.sort_values(by='timestamp', ascending=False).loc[0, 'text']
     
-        eoi_prompt = self.expression_of_interest_template.format(details=details)
+        eoi_prompt = self.expression_of_interest_template.format(job_description=job_description)
         print("Formatted Prompt for EXPRESSION_OF_INTEREST_TEMPLATE:\n", eoi_prompt)
         eoi_template = extract_output_block(self.llm.predict(eoi_prompt))
         print("LLM Prediction for EXPRESSION_OF_INTEREST_TEMPLATE:\n", eoi_template)

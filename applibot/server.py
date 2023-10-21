@@ -39,10 +39,6 @@ async def post_questions_route(question: str = Form(...), applibot: Applibot = D
 async def delete_info_route(info_id: str, applibot: Applibot = Depends(get_applibot)):
     return await applibot.delete_info(info_id)
 
-@app.get("/info/")
-async def get_info_route(applibot: Applibot = Depends(get_applibot)):
-    return await applibot.get_all_info()
-
 @app.post("/cover-letter/")
 async def generate_cover_letter_route(job_description: str = Form(...), applibot: Applibot = Depends(get_applibot)):
     return await applibot.generate_cover_letter(job_description)
@@ -52,9 +48,19 @@ async def dm_reply_route(dm: str = Form(...), job_description: str = Form(...), 
     return await applibot.reply_to_dm(dm, job_description)
 
 @app.post("/eoi/")
-async def generate_eoi_route(details: str = Form(...), applibot: Applibot = Depends(get_applibot)):
+async def generate_eoi_route(job_description: str = Form(...), applibot: Applibot = Depends(get_applibot)):
     """Route to generate an Expression of Interest letter based on company/field details."""
-    return await applibot.generate_eoi(details)
+    return await applibot.generate_eoi(job_description)
+
+async def export_info(self):
+    """API to export all the info from the info store."""
+    return await self.get_all_info()
+
+async def import_info(self, info_list: list):
+    """API to import a list of info to the info store."""
+    for info in info_list:
+        await self.post_info(info_text=info['text'])
+    return {"status": "Info imported successfully"}
 
 def main():
     parser = argparse.ArgumentParser(description='Run the resume server.')
