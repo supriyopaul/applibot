@@ -52,15 +52,9 @@ async def generate_eoi_route(job_description: str = Form(...), applibot: Applibo
     """Route to generate an Expression of Interest letter based on company/field details."""
     return await applibot.generate_eoi(job_description)
 
-async def export_info(self):
-    """API to export all the info from the info store."""
-    return await self.get_all_info()
-
-async def import_info(self, info_list: list):
-    """API to import a list of info to the info store."""
-    for info in info_list:
-        await self.post_info(info_text=info['text'])
-    return {"status": "Info imported successfully"}
+@app.post("/skill-match/")
+async def skill_match(job_description: str = Form(...), applibot: Applibot = Depends(get_applibot)):
+    return await applibot.skill_match(job_description)
 
 def main():
     parser = argparse.ArgumentParser(description='Run the resume server.')

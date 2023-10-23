@@ -166,7 +166,7 @@ Dear {{Hiring Manager or Recruiter Name}},
 
 {{Why You're a Good Fit}}
 - Detail why you are a good fit for this job, citing specific skills and experiences that align with the job description.
-- Keyword for skills releveant to the Job description
+- Keyword for skills relevant to the Job description
 
 {{Why You're Interested in This Job}}
 - Explain why you are interested in this job and how it aligns with your career goals.
@@ -187,9 +187,9 @@ Answer:
 
 INFO_FORMATTING_TEMPLATE = """
 From the given user information input, which may be poorly formatted, empty, or partially filled out:
-=====Unformated Info start=====
+=====Unformatted Info start=====
 {unformatted_info}
-=====Unformated Info end=====
+=====Unformatted Info end=====
 Reformat the information and values to adhere to the specified format: <Field: Value>.
 Value any field not found in the above given information should be removed.
 Your output should strictly follow the example provided below:
@@ -229,6 +229,36 @@ Do you have a passport?: Not sure!
 ...
 =====Answers end=====
 """
+
+ANALYSIS_TEMPLATE = """
+Given the provided information, perform the following analysis to understand the candidate's fit for the job role:
+=====Job Description start=====
+{job_description}
+=====Job Description end=====
+
+=====Resume start=====
+{resume}
+=====Resume end=====
+
+=====Additional Information start=====
+{info_text}
+=====Additional Information end=====
+
+1. Identify, list, and rank the top skills required for the job as mentioned in the job description, sorted by their apparent importance.
+2. Compare the skills of the applicant from the provided resume and additional information against the skills required for the job.
+3. Score the candidate's fit for the role out of ten, based on the alignment of their skills with the job requirements.
+
+Ensure to format the output as follows:
+=====Skills Analysis start=====
+- Skill 1: skill name (✗) [Similar skill: similar skill name]
+- Skill 2: skill name (✓)
+- Skill 3: skill_name (✗)
+...
+
+Score: X/10
+=====Skills Analysis end=====
+"""
+
 
 QUESTION_EXTRACTION_TEMPLATE = """
 From the provided unformatted Form:
