@@ -40,17 +40,20 @@ def load_config(yaml_path):
 
     # Load chat-model
     config_objects.llm = ChatOpenAI(
+        openai_api_key=raw_config['chat-model']['key'],
         model=raw_config['chat-model']['model-name'],
-        temperature=raw_config['chat-model']['temperature']
+        temperature=raw_config['chat-model']['temperature'],
+        cache=bool(raw_config['chat-model']['cache'])
     )
 
     # Load embeddings-model (assuming OpenAIEmbeddings is the only option for now)
-    config_objects.embedding = OpenAIEmbeddings()
+    config_objects.embedding = OpenAIEmbeddings(openai_api_key=raw_config['embeddings-model']['key'])
 
     # Load service details
     config_objects.service = AttributeDict()
     config_objects.service.host = raw_config['service']['host']
     config_objects.service.port = raw_config['service']['port']
+    config_objects.service.workers = raw_config['service']['workers']
 
     config = AttributeDict()
     config.raw = raw_config

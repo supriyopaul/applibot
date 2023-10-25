@@ -5,7 +5,12 @@ from applibot.applibot import Applibot
 from applibot.utils.config_loader import load_config
 
 app = FastAPI()
-bot_instance = None
+parser = argparse.ArgumentParser(description='Run the resume server.')
+parser.add_argument('--config', required=True, type=str, help='Path to the configuration YAML file.')
+args = parser.parse_args()
+config = load_config(args.config)
+bot_instance = Applibot(config)
+app = FastAPI()
 
 def get_applibot():
     global bot_instance
@@ -57,15 +62,12 @@ async def skill_match(job_description: str = Form(...), applibot: Applibot = Dep
     return await applibot.skill_match(job_description)
 
 def main():
-    parser = argparse.ArgumentParser(description='Run the resume server.')
-    parser.add_argument('--config', required=True, type=str, help='Path to the configuration YAML file.')
-    args = parser.parse_args()
-    global bot_instance
-    config = load_config(args.config)
-    bot_instance = Applibot(config)
-
     import uvicorn
-    uvicorn.run(app, host=config.objects.service.host, port=config.objects.service.port)  # Adjust this based on your needs or load it from your config.
+    uvicorn.run("applibot:app",
+                host=config.objects.service.host,
+                port=config.objects.service.port,
+                workers=config.objects.service.workers,
+                )
 
 if __name__ == "__main__":
     main()
