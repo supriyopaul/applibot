@@ -10,6 +10,17 @@ vector-store:
       table-name: "info"
       schema: InfoSchema
 
+store:
+  postgres:
+    user-store:
+      host: "your_database_host"
+      port: your_database_port
+      database: "your_database_name"
+      user: "your_database_user"
+      password: "your_secure_password"
+      table-name: "users"
+      schema: UserSchema
+
 chat-model:
   model-name: "gpt-4"
   temperature: 0.0

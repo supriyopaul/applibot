@@ -1,6 +1,19 @@
 **About "Applibot"**
+    
+Applibot is a cutting-edge tool designed to streamline the job application process. It stores past application details, aids in swiftly populating new job applications, and offers functionality for auto-filling application forms, crafting Expression-of-Interest letters, and responding to recruiter queries. Applibot's comprehensive API lets users manage their resumes, personal information, and even suggests skill matches for various job descriptions. It's an innovative solution tailored for the contemporary job application landscape.
 
-Applibot is a tool designed to simplify the job application process. By storing details from past applications, it aids users in quickly filling out new job forms. Its capabilities extend to auto-filling applications, creating Expression-of-Interest messages, and assisting in responses to recruiter inquiries. Through Applibot's API, users can manage their resumes and personal information, and even receive suggestions on matching skills with job descriptions. It's a practical approach to the modern job application process.
+**Note**: To fully harness the capabilities of Applibot, particularly the ones that interact with the GPT-4 model, you'll need an OpenAI API key that can access GPT-4. As of now, the GPT-4 access is a premium feature. Ensure you possess the necessary permissions.
+
+**Steps to Obtain an OpenAI API Key:**
+
+1. **Sign Up on OpenAI**: Navigate to the [OpenAI website](https://openai.com/) and create an account.
+2. **Verify Your Account**: Confirm your account through the verification link sent to your email.
+3. **Login**: Use your credentials to log in to your OpenAI account.
+4. **Access API Section**: Click on your account name at the top right and select "View API keys".
+5. **Generate a New Key**: Click "Create new secret key", name it appropriately, and then generate.
+6. **Copy & Store Your Key**: Securely copy and store this key; it won't be retrievable again.
+7. **Billing Setup**: Ensure you have a payment method associated for any API usage charges.
+8. **Set Usage Limits**: Control your expenditure by setting monthly API usage limits.
 
 ## Usage Guide
 
@@ -89,3 +102,68 @@ The Applibot system provides several API endpoints to facilitate job application
 
 7. **Expression of Interest (EOI)**
    - `generate_eoi(job_description: str)`: Generates an Expression of Interest (EOI) based on a given job description.
+
+
+## Installation
+
+To install and set up the application, you can either use a virtual environment or Docker:
+
+### Virtual Environment Setup:
+
+1. **Create a virtual environment and activate it**:
+    ```bash
+    python3.9 -m venv ./venv
+    source venv/bin/activate
+    ```
+
+2. **Install the application**:
+    ```bash
+    pip install .
+    ```
+
+### Docker Setup:
+
+1. **Build the Docker image**:
+    ```bash
+    docker build -t applibot:latest .
+    ```
+
+## Configuration
+
+Before running the application, you will need to set up your configuration file. You can start by copying the sample configuration and modifying it to suit your needs.
+
+1. **Copy the sample configuration file**:
+    ```bash
+    cp sample-server-config.yaml your-config-file.yaml
+    ```
+
+2. **Edit the configuration file**:
+    ```bash
+    nano your-config-file.yaml
+    ```
+
+***Note*:** Ensure that your OpenAI API key (`chat-model.key` and `embeddings-model.key`) is correctly configured and has access to the required models and services, as the GPT-4 model is a paid service and requires proper authentication and authorization.
+
+   Save and exit the editor.
+
+## Run
+
+Depending on your installation method, choose the appropriate run command:
+
+### For Virtual Environment:
+
+```bash
+applibot --config your-config-file.yaml
+```
+
+This will start the application, making it accessible on the specified host and port in your configuration file (default is `0.0.0.0:9000`).
+
+### For Docker:
+
+Ensure that the path to your configuration file is correctly mapped:
+
+```bash
+docker run -p 9000:9000 -v $(pwd)/your-config-file.yaml:/usr/src/app/your-config-file.yaml applibot:latest
+```
+
+The Docker container will start, and the application will be accessible on the host's port `9000`.
