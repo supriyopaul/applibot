@@ -134,12 +134,12 @@ Before running the application, you will need to set up your configuration file.
 
 1. **Copy the sample configuration file**:
     ```bash
-    cp sample-server-config.yaml your-config-file.yaml
+    cp sample-server-config.yaml my-config-file.yaml
     ```
 
 2. **Edit the configuration file**:
     ```bash
-    nano your-config-file.yaml
+    nano my-config-file.yaml
     ```
 
 ***Note*:** Ensure that your OpenAI API key (`chat-model.key` and `embeddings-model.key`) is correctly configured and has access to the required models and services, as the GPT-4 model is a paid service and requires proper authentication and authorization.
@@ -153,7 +153,7 @@ Depending on your installation method, choose the appropriate run command:
 ### For Virtual Environment:
 
 ```bash
-applibot --config your-config-file.yaml
+python -m applibot.server --config my-config-file.yaml
 ```
 
 This will start the application, making it accessible on the specified host and port in your configuration file (default is `0.0.0.0:9000`).
@@ -163,7 +163,11 @@ This will start the application, making it accessible on the specified host and 
 Ensure that the path to your configuration file is correctly mapped:
 
 ```bash
-docker run -p 9000:9000 -v $(pwd)/your-config-file.yaml:/usr/src/app/your-config-file.yaml applibot:latest
+docker run \
+    -p 9000:9000 \
+    -v $(pwd)/my-config-file.yaml:/usr/src/app/my-config-file.yaml \
+    -v $(pwd)/my-data/lancedb:/usr/src/app/my-data/lancedb \
+    applibot:latest
 ```
 
 The Docker container will start, and the application will be accessible on the host's port `9000`.

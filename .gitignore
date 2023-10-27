@@ -162,3 +162,4 @@ cython_debug/
 # custom-paths
 my-data/
 local-config.yaml
+my-config-file.yaml

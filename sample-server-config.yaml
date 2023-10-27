@@ -13,12 +13,12 @@ vector-store:
 store:
   postgres:
     user-store:
-      host: "your_database_host"
-      port: your_database_port
-      database: "your_database_name"
-      user: "your_database_user"
-      password: "your_secure_password"
-      table-name: "users"
+      host: localhost
+      port: 5432
+      database: applibot_db
+      user: applibot_user
+      password: change_this_password
+      table-name: users
       schema: UserSchema
 
 chat-model:

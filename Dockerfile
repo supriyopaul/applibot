@@ -1,4 +1,3 @@
-# Use an official Python runtime as the base image
 FROM python:3.9-slim
 
 # Set environment variables
@@ -26,5 +25,8 @@ RUN pip install --upgrade pip \
 # Copy the content of the local src directory to the working directory
 COPY . .
 
+# Declare the directory as a mountable volume
+VOLUME /usr/src/app/my-data/lancedb
+
 # Specify the command to run on container start
-CMD ["python", "-m", "applibot.server", "--config", "local-config.yaml"]
+CMD ["python", "-m", "applibot.server", "--config", "/usr/src/app/my-config-file.yaml"]
