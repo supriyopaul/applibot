@@ -166,7 +166,7 @@ Ensure that the path to your configuration file is correctly mapped:
 docker run \
     -p 9000:9000 \
     -v $(pwd)/my-config-file.yaml:/usr/src/app/my-config-file.yaml \
-    -v $(pwd)/my-data/lancedb:/usr/src/app/my-data/lancedb \
+    -v $(pwd)/my-data/:/usr/src/app/my-data/ \
     applibot:latest
 ```
 

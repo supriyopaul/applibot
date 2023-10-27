@@ -26,7 +26,7 @@ RUN pip install --upgrade pip \
 COPY . .
 
 # Declare the directory as a mountable volume
-VOLUME /usr/src/app/my-data/lancedb
+VOLUME /usr/src/app/my-data/
 
 # Specify the command to run on container start
 CMD ["python", "-m", "applibot.server", "--config", "/usr/src/app/my-config-file.yaml"]
