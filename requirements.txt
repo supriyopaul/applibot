@@ -1,0 +1,8 @@
+fastapi==0.104.0
+langchain==0.0.324
+lancedb==0.3.2
+openai==0.28.1
+python-multipart==0.0.6
+uvicorn==0.23.2
+pandas==2.1.2
+tiktoken==0.5.1
