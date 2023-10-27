@@ -1,12 +1,16 @@
+service:
+  host: 0.0.0.0
+  port: 9000
+  workers: 1
+  data_path: "my-data"
+
 vector-store:
   lancedb:
     resume-store:
-      path: "data/sample-lancedb"
       table-name: "resume"
       schema: ResumeSchema
 
     info-store:
-      path: "data/sample-lancedb"
       table-name: "info"
       schema: InfoSchema
 
@@ -25,13 +29,9 @@ chat-model:
   model-name: "gpt-4"
   temperature: 0.0
   key: xxx
-  cache: False
+  cache: True
 
 embeddings-model:
   name: "OpenAIEmbeddings"
   key: xxx
-  
-service:
-  host: 0.0.0.0
-  port: 9000
-  workers: 5
+  cache: True

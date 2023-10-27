@@ -5,7 +5,10 @@ from pprint import pprint
 from langchain.chat_models import ChatOpenAI
 from applibot.utils.lancedb_store import LanceDBStore
 from langchain.embeddings.openai import OpenAIEmbeddings
-
+from langchain.embeddings import CacheBackedEmbeddings
+from langchain.globals import set_llm_cache
+from langchain.cache import SQLiteCache
+from langchain.storage import LocalFileStore
 
 class AttributeDict(dict):
     """ Dictionary subclass whose entries can be accessed by attributes
@@ -26,28 +29,44 @@ def load_config(yaml_path):
 
     config_objects = AttributeDict()
 
+    # Derive paths from service.data_path
+    data_path = raw_config['service']['data_path']
+    lancedb_path = f"{data_path}/lancedb"
+    llm_cache_path = f"{data_path}/sqlite"
+    embeddings_cache_path = f"{data_path}/ecache"
+
     # Load vector-store
     config_objects.resume_store = LanceDBStore(
-        raw_config['vector-store']['lancedb']['resume-store']['path'],
+        f"{lancedb_path}",
         raw_config['vector-store']['lancedb']['resume-store']['table-name'],
         raw_config['vector-store']['lancedb']['resume-store']['schema']
     )
     config_objects.info_store = LanceDBStore(
-        raw_config['vector-store']['lancedb']['info-store']['path'],
+        f"{lancedb_path}",
         raw_config['vector-store']['lancedb']['info-store']['table-name'],
         raw_config['vector-store']['lancedb']['info-store']['schema']
     )
 
     # Load chat-model
+    set_llm_cache(SQLiteCache(database_path=llm_cache_path))
     config_objects.llm = ChatOpenAI(
         openai_api_key=raw_config['chat-model']['key'],
         model=raw_config['chat-model']['model-name'],
         temperature=raw_config['chat-model']['temperature'],
-        cache=bool(raw_config['chat-model']['cache'])
+        cache=bool(raw_config['chat-model']['cache']),
     )
 
     # Load embeddings-model (assuming OpenAIEmbeddings is the only option for now)
-    config_objects.embedding = OpenAIEmbeddings(openai_api_key=raw_config['embeddings-model']['key'])
+    cache_embeddings=bool(raw_config['embeddings-model']['cache'])
+    underlying_embeddings = OpenAIEmbeddings(openai_api_key=raw_config['embeddings-model']['key'])
+    fs = LocalFileStore(embeddings_cache_path)
+    cached_embedder = CacheBackedEmbeddings.from_bytes_store(
+        underlying_embeddings, fs, namespace=underlying_embeddings.model
+    )
+    if cache_embeddings:
+            config_objects.embedding = underlying_embeddings
+    else:
+         config_objects.embedding = cached_embedder
 
     # Load service details
     config_objects.service = AttributeDict()
