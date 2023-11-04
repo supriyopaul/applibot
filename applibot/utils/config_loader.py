@@ -4,6 +4,7 @@ from pprint import pprint
 
 from langchain.chat_models import ChatOpenAI
 from applibot.utils.lancedb_store import LanceDBStore
+from applibot.utils.postgres_store import PostgresStore
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.embeddings import CacheBackedEmbeddings
 from langchain.globals import set_llm_cache
@@ -82,6 +83,9 @@ def load_config(yaml_path):
     config_objects.service.host = raw_config.service.host
     config_objects.service.port = raw_config.service.port
     config_objects.service.workers = raw_config.service.workers
+
+    # Load Postgres store
+    config_objects.postgres_store = PostgresStore(raw_config.table_store.postgres.url)
 
     config = AttributeDict()
     config.raw = raw_config
