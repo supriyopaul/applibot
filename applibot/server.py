@@ -63,7 +63,7 @@ async def skill_match(job_description: str = Form(...), applibot: Applibot = Dep
 
 def main():
     import uvicorn
-    uvicorn.run("applibot:app",
+    uvicorn.run(app,
                 host=config.objects.service.host,
                 port=config.objects.service.port,
                 workers=config.objects.service.workers,

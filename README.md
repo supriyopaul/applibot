@@ -171,3 +171,11 @@ docker run \
 ```
 
 The Docker container will start, and the application will be accessible on the host's port `9000`.
+
+
+## Postgres setup
+```
+docker run -itd -e POSTGRES_USER=applibot_user -e POSTGRES_PASSWORD=change_this_password -p 5432:5432 -v ./my-data/postgresql:/var/lib/postgresql/data --name postgresql postgres
+docker exec -it postgresql psql -U applibot_user
+applibot_user=# CREATE DATABASE applibot_db;
+```
