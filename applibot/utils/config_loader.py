@@ -46,11 +46,6 @@ def load_config(yaml_path):
     postgres_path = f"{data_path}/postgresql"
 
     # Load vector-store
-    config_objects.resume_store = LanceDBStore(
-        f"{lancedb_path}",
-        raw_config.vector_store.lancedb.resume_store.table_name,
-        raw_config.vector_store.lancedb.resume_store.schema
-    )
     config_objects.info_store = LanceDBStore(
         f"{lancedb_path}",
         raw_config.vector_store.lancedb.info_store.table_name,

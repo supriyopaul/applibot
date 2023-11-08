@@ -4,19 +4,13 @@ import pydantic
 from typing import List, Type
 from lancedb.pydantic import Vector
 
-class ResumeSchema(pydantic.BaseModel):
-    id: str
-    text: str
-    vector: Vector(1536)
-    timestamp: int
-
 class InfoSchema(pydantic.BaseModel):
     id: str
     text: str
     vector:  Vector(1536)
+    user_id: str
 
 MODEL_MAP = {
-    'ResumeSchema': ResumeSchema,
     'InfoSchema': InfoSchema
 }
 
