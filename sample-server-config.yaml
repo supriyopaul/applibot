@@ -2,36 +2,32 @@ service:
   host: 0.0.0.0
   port: 9000
   workers: 1
-  data_path: "my-data"
+  data-path: my-data/
+  secret-key: xxx
+  hash-algorithm: HS256
+  access-token-expire-minutes: 10000
+  token-url: token
+  pwd-context-schemes:
+   - bcrypt
+  pwd-context-depricated: auto
+  
+table-store:
+  postgres:
+   url: "postgresql://applibot_user:xxx@localhost/applibot_db"
 
 vector-store:
   lancedb:
-    resume-store:
-      table-name: "resume"
-      schema: ResumeSchema
-
     info-store:
-      table-name: "info"
+      table-name: info
       schema: InfoSchema
 
-store:
-  postgres:
-    user-store:
-      host: localhost
-      port: 5432
-      database: applibot_db
-      user: applibot_user
-      password: change_this_password
-      table-name: users
-      schema: UserSchema
-
 chat-model:
-  model-name: "gpt-4"
+  model-name: gpt-4-1106-preview
   temperature: 0.0
-  key: xxx
+  key: sk-xxx
   cache: True
 
 embeddings-model:
-  name: "OpenAIEmbeddings"
-  key: xxx
+  name: OpenAIEmbeddings
+  key: sk-xxx
   cache: True
