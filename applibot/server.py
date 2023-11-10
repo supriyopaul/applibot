@@ -222,19 +222,16 @@ async def get_latest_resume(
         raise HTTPException(status_code=404, detail="No resume found")
     return latest_resume
 
-@app.get("/users/{user_id}/resumes/", response_model=List[ResumeResponse])
+@app.get("/resumes/", response_model=List[ResumeResponse])
 async def get_resumes_for_user(
-    user_id: int,
     current_user: UserInDB = Depends(get_current_user),
     db: Session = Depends(db_store.get_db)
 ):
     """API endpoint to retrieve all resumes for a specific user, if authorized."""
-    if current_user.id != user_id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to view these resumes")
     db_resumes = db.query(Resume).filter(Resume.user_id == user_id).all()
     return db_resumes
 
-@app.delete("/resume/{resume_id}/", response_model=dict)
+@app.delete("/resume/", response_model=dict)
 async def delete_resume(
     resume_id: int,
     current_user: UserInDB = Depends(get_current_user),
