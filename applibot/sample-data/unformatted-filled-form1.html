@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Application Form</title>
+</head>
+<body>
+
+<h2>My Information</h2>
+<form action="/submit_application">
+
+    <label for="workedBefore">Have you previously worked for TechSphere Innovations?</label>
+    <input type="text" id="workedBefore" name="workedBefore" value="No" readonly><br><br>
+
+    <label for="legalName">Legal Name</label>
+    <input type="text" id="legalName" name="legalName" value="Mr. Richard Hendricks" readonly><br><br>
+
+    <label for="preferredName">I have a preferred name</label>
+    <input type="text" id="preferredName" name="preferredName" value="No" readonly><br><br>
+
+    <label for="address">Address</label>
+    <textarea id="address" name="address" readonly>324 Aviato Blvd, San Francisco, CA 94105, USA</textarea><br><br>
+
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" value="rhendricks@piedpiper.com" readonly><br><br>
+
+    <label for="phone">Phone</label>
+    <input type="tel" id="phone" name="phone" value="+1 555-321-9876 (Private Phone)" readonly><br><br>
+
+    <h2>My Experience</h2>
+    <!-- Work Experience 1 -->
+    <fieldset>
+        <legend>Work Experience 1</legend>
+        <label for="jobTitle1">Job Title</label>
+        <input type="text" id="jobTitle1" name="jobTitle1" value="CEO & Founder" readonly><br><br>
+        <label for="company1">Company</label>
+        <input type="text" id="company1" name="company1" value="Pied Piper" readonly><br><br>
+        <label for="location1">Location</label>
+        <input type="text" id="location1" name="location1" value="San Francisco, CA" readonly><br><br>
+        <label for="currentWork1">I currently work here</label>
+        <input type="text" id="currentWork1" name="currentWork1" value="Yes" readonly><br><br>
+        <label for="fromDate1">From</label>
+        <input type="text" id="fromDate1" name="fromDate1" value="2014" readonly><br><br>
+        <label for="roleDesc1">Role Description</label>
+        <textarea id="roleDesc1" name="roleDesc1" readonly>Founded and led the development of a revolutionary data compression algorithm. Navigated multiple business challenges, secured VC funding, and led a team of engineers.</textarea>
+    </fieldset>
+
+    <!-- Work Experience 2 -->
+    <fieldset>
+        <legend>Work Experience 2</legend>
+        <label for="jobTitle2">Job Title</label>
+        <input type="text" id="jobTitle2" name="jobTitle2" value="Software Engineer" readonly><br><br>
+        <label for="company2">Company</label>
+        <input type="text" id="company2" name="company2" value="Hooli" readonly><br><br>
+        <label for="location2">Location</label>
+        <input type="text" id="location2" name="location2" value="San Francisco, CA" readonly><br><br>
+        <label for="currentWork2">I currently work here</label>
+        <input type="text" id="currentWork2" name="currentWork2" value="No" readonly><br><br>
+        <label for="fromDate2">From</label>
+        <input type="text" id="fromDate2" name="fromDate2" value="2012" readonly><br><br>
+        <label for="toDate2">To</label>
+        <input type="text" id="toDate2" name="toDate2" value="2014" readonly><br><br>
+        <label for="roleDesc2">Role Description</label>
+        <textarea id="roleDesc2" name="roleDesc2" readonly>Developed and maintained code for Nucleus, collaborated with cross-functional teams, and innovated new data compression methods.</textarea>
+    </fieldset>
+
+    <!-- Work Experience 3 -->
+    <fieldset>
+        <legend>Work Experience 3</legend>
+        <label for="jobTitle3">Job Title</label>
+        <input type="text" id="jobTitle3" name="jobTitle3" value="Freelance Developer" readonly><br><br>
+        <label for="company3">Company</label>
+        <input type="text" id="company3" name="company3" value="Self-Employed" readonly><br><br>
+        <label for="location3">Location</label>
+        <input type="text" id="location3" name="location3" value="San Francisco, CA" readonly><br><br>
+        <label for="currentWork3">I currently work here</label>
+        <input type="text" id="currentWork3" name="currentWork3" value="No" readonly><br><br>
+        <label for="fromDate3">From</label>
+        <input type="text" id="fromDate3" name="fromDate3" value="2010" readonly><br><br>
+        <label for="toDate3">To</label>
+        <input type="text" id="toDate3" name="toDate3" value="2012" readonly><br><br>
+        <label for="roleDesc3">Role Description</label>
+        <textarea id="roleDesc3" name="roleDesc3" readonly>Worked on various freelance projects, specializing in back-end development and system design.</textarea>
+    </fieldset>
+
+    <!-- Education 1 -->
+    <fieldset>
+        <legend>Education 1</legend>
+        <label for="school1">School or University</label>
+        <input type="text" id="school1" name="school1" value="Stanford University" readonly><br><br>
+        <label for="degree1">Degree</label>
+        <input type="text" id="degree1" name="degree1" value="M.S." readonly><br><br>
+        <label for="fieldOfStudy1">Field of Study</label>
+        <input type="text" id="fieldOfStudy1" name="fieldOfStudy1" value="Computer Science" readonly><br><br>
+        <label for="gpa1">Overall Result (GPA)</label>
+        <input type="text" id="gpa1" name="gpa1" value="3.9" readonly><br><br>
+        <label for="fromDateEdu1">From</label>
+        <input type="text" id="fromDateEdu1" name="fromDateEdu1" value="2010" readonly><br><br>
+        <label for="toDateEdu1">To (Actual or Expected)</label>
+        <input type="text" id="toDateEdu1" name="toDateEdu1" value="2012" readonly><br><br>
+    </fieldset>
+
+    <!-- Education 2 -->
+    <fieldset>
+        <legend>Education 2</legend>
+        <label for="school2">School or University</label>
+        <input type="text" id="school2" name="school2" value="California Institute of Technology (Caltech)" readonly><br><br>
+        <label for="degree2">Degree</label>
+        <input type="text" id="degree2" name="degree2" value="B.S." readonly><br><br>
+        <label for="fieldOfStudy2">Field of Study</label>
+        <input type="text" id="fieldOfStudy2" name="fieldOfStudy2" value="Computer Science" readonly><br><br>
+        <label for="fieldOfStudy2">Field of Study</label>
+        <input type="text" id="fieldOfStudy2" name="fieldOfStudy2" value="Computer Science" readonly><br><br>
+        <label for="gpa2">Overall Result (GPA)</label>
+        <input type="text" id="gpa2" name="gpa2" value="3.8" readonly><br><br>
+        <label for="fromDateEdu2">From</label>
+        <input type="text" id="fromDateEdu2" name="fromDateEdu2" value="2006" readonly><br><br>
+        <label for="toDateEdu2">To (Actual or Expected)</label>
+        <input type="text" id="toDateEdu2" name="toDateEdu2" value="2010" readonly><br><br>
+    </fieldset>
+
+    <!-- Languages -->
+    <fieldset>
+        <legend>Languages</legend>
+        <label for="language1">Language</label>
+        <input type="text" id="language1" name="language1" value="English" readonly><br><br>
+        <label for="fluency1">I am fluent in this language</label>
+        <input type="text" id="fluency1" name="fluency1" value="Yes" readonly><br><br>
+        <label for="proficiency1">Overall Proficiency</label>
+        <input type="text" id="proficiency1" name="proficiency1" value="Excellent" readonly><br><br>
+    </fieldset>
+
+    <!-- Resume/CV -->
+    <fieldset>
+        <legend>Resume/CV</legend>
+        <label for="resume">Resume/CV File</label>
+        <input type="text" id="resume" name="resume" value="Richard+Hendricks.pdf" readonly><br><br>
+        <label for="resumeSize">File Size</label>
+        <input type="text" id="resumeSize" name="resumeSize" value="435.98 KB" readonly><br><br>
+    </fieldset>
+
+    <!-- Websites -->
+    <fieldset>
+        <legend>Websites</legend>
+        <label for="website1">GitHub Profile</label>
+        <input type="text" id="website1" name="website1" value="https://github.com/rhendricks" readonly><br><br>
+        <label for="website2">Personal Website</label>
+        <input type="text" id="website2" name="website2" value="https://piedpiper.com/richard" readonly><br><br>
+    </fieldset>
+
+    <!-- Application Questions 1 of 2 -->
+    <fieldset>
+        <legend>Application Questions 1 of 2</legend>
+        <label for="appliedBefore">Have you applied to TechSphere Innovations before?</label>
+        <input type="text" id="appliedBefore" name="appliedBefore" value="No" readonly><br><br>
+        <label for="willingToRelocate">Would you be willing to relocate if the company required?</label>
+        <input type="text" id="willingToRelocate" name="willingToRelocate" value="Yes" readonly><br><br>
+        <label for="relativesWorking">Do you have relatives or friends currently working with TechSphere Innovations?</label>
+        <input type="text" id="relativesWorking" name="relativesWorking" value="No" readonly><br><br>
+        <label for="workRight">Do you have the Right to work in the country where the job is located?</label>
+        <input type="text" id="workRight" name="workRight" value="Yes" readonly><br><br>
+    </fieldset>
+
+    <!-- Application Questions 2 of 2 -->
+    <fieldset>
+        <legend>Application Questions 2 of 2</legend>
+        <label for="aadharCard">Please confirm if you have a valid Aadhar card</label>
+        <input type="text" id="aadharCard" name="aadharCard" value="No, I don't" readonly><br><br>
+        <label for="panCard">Please confirm if you have a valid PAN card</label>
+        <input type="text" id="panCard" name="panCard" value="No, I don't" readonly><br><br>
+        <label for="ageConfirmation">I confirm that I am 18+ years of age</label>
+        <input type="text" id="ageConfirmation" name="ageConfirmation" value="Yes, I do" readonly><br><br>
+    </fieldset>
+
+    <!-- Voluntary Disclosures -->
+    <fieldset>
+        <legend>Voluntary Disclosures</legend>
+        <label for="gender">Please specify your Gender</label>
+        <input type="text" id="gender" name="gender" value="Male" readonly><br><br>
+        <label for="dob">Please specify your Date of Birth</label>
+        <input type="text" id="dob" name="dob" value="4/12/1985" readonly><br><br>
+        <label for="countryBirth">Please specify your Country of Birth</label>
+        <input type="text" id="countryBirth" name="countryBirth" value="USA" readonly><br><br>
+        <label for="cityBirth">Please specify your City of Birth</label>
+        <input type="text" id="cityBirth" name="cityBirth" value="San Francisco" readonly><br><br>
+        <label for="maritalStatus">Please specify your Marital Status</label>
+        <input type="text" id="maritalStatus" name="maritalStatus" value="Single" readonly><br><br>
+        <label for="citizenshipStatus">Please specify your Citizenship Status</label>
+        <input type="text" id="citizenshipStatus" name="citizenshipStatus" value="Citizen (USA)" readonly><br><br>
+        <label for="primaryNationality">Please specify your Primary Nationality</label>
+        <input type="text" id="primaryNationality" name="primaryNationality" value="USA" readonly><br><br>
+        <label for="additionalNationalities">Please specify your Additional Nationalities</label>
+        <input type="text" id="additionalNationalities" name="additionalNationalities" value="No Response" readonly><br><br>
+    </fieldset>
+
+    <!-- Terms and Conditions -->
+    <fieldset>
+        <legend>Terms and Conditions</legend>
+        <label for="terms">Yes, I confirm that I have read and understood the Privacy Policy.</label>
+        <input type="text" id="terms" name="terms" value="Yes" readonly><br><br>
+    </fieldset>
+
+    <input type="submit" value="Submit Application">
+</form>
+</body>
+</html>
+
+
+

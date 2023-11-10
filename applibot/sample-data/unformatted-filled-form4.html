@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skills Inventory & Training Form</title>
+</head>
+<body>
+    <h2>Skills Inventory & Training</h2>
+
+    <form action="/submit-skills" method="post">
+        <fieldset>
+            <legend>Proficient in Programming Languages</legend>
+            <label for="java">Java:</label>
+            <input type="checkbox" id="java" name="programming_languages" value="Java" checked disabled> Java<br>
+
+            <label for="go">Go:</label>
+            <input type="checkbox" id="go" name="programming_languages" value="Go" checked disabled> Go<br>
+
+            <label for="python">Python:</label>
+            <input type="checkbox" id="python" name="programming_languages" value="Python" checked disabled> Python<br>
+
+            <label for="cpp">C++:</label>
+            <input type="checkbox" id="cpp" name="programming_languages" value="C++" checked disabled> C++<br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Database Expertise</legend>
+            <label for="mysql">MySQL:</label>
+            <input type="checkbox" id="mysql" name="databases" value="MySQL" checked disabled> MySQL<br>
+
+            <label for="postgresql">PostgreSQL:</label>
+            <input type="checkbox" id="postgresql" name="databases" value="PostgreSQL" checked disabled> PostgreSQL<br>
+
+            <label for="mongodb">MongoDB:</label>
+            <input type="checkbox" id="mongodb" name="databases" value="MongoDB" checked disabled> MongoDB<br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Certifications Obtained</legend>
+            <label for="cs-stanford">Advanced Computer Science (Stanford):</label>
+            <input type="text" id="cs-stanford" name="certifications" value="Advanced Computer Science (Stanford)" readonly><br>
+
+            <label for="data-compression-mit">Data Compression Specialist (MIT):</label>
+            <input type="text" id="data-compression-mit" name="certifications" value="Data Compression Specialist (MIT)" readonly><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Workshops Attended</legend>
+            <label for="tech-summit">Global Tech Leaders Summit, 2021:</label>
+            <input type="text" id="tech-summit" name="workshops" value="Global Tech Leaders Summit, 2021" readonly><br>
+
+            <label for="compression-symposium">Compression Algorithms Symposium, 2020:</label>
+            <input type="text" id="compression-symposium" name="workshops" value="Compression Algorithms Symposium, 2020" readonly><br>
+        </fieldset>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

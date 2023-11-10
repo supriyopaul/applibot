@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Personal & Lifestyle Inquiry Form</title>
+</head>
+<body>
+    <h2>Basic Personal & Lifestyle Inquiry</h2>
+
+    <form action="/submit-form" method="post">
+        <fieldset>
+            <legend>General Details</legend>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" value="Richard Hendricks" readonly><br><br>
+
+            <label>Contact Information:</label><br>
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" name="phone" value="+1 555-321-9876" readonly><br>
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" name="email" value="rhendricks@piedpiper.com" readonly><br><br>
+
+            <label for="permanent-address">Permanent Address:</label>
+            <textarea id="permanent-address" name="permanent_address" readonly>324 Aviato Blvd, San Francisco, CA, USA</textarea><br><br>
+
+            <label for="temporary-address">Temporary Address (if different):</label>
+            <input type="text" id="temporary-address" name="temporary_address" value="Not Applicable" readonly><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Lifestyle Choices</legend>
+            <label for="diet">Diet Preference:</label>
+            <input type="text" id="diet" name="diet" value="Vegetarian" readonly><br>
+            <label for="activity">Physical Activity:</label>
+            <input type="text" id="activity" name="activity" value="Occasionally goes for running" readonly><br>
+            <label for="allergies">Allergies:</label>
+            <input type="text" id="allergies" name="allergies" value="None" readonly><br>
+            <label for="favorite-book">Favorite Book:</label>
+            <input type="text" id="favorite-book" name="favorite_book" value="Clean Code by Robert C. Martin" readonly><br><br>
+        </fieldset>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
