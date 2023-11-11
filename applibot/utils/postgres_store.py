@@ -6,15 +6,29 @@ from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import func
+from sqlalchemy_utils import database_exists, create_database
 
-DEFAULT_DB_URL = "postgresql://applibot_user:change_this_password@localhost/applibot_db"
+DEFAULT_DB_URL = "postgresql://applibot_user:default_password@localhost/applibot_db"
 Base = declarative_base()
+USER_TABLE_NAME = 'users'
+RESUME_TABLE_NAME = 'resumes'
 
 class PostgresStore:
     def __init__(self, database_url=DEFAULT_DB_URL):
+        self.database_url = database_url
+        self._create_db()
         self.engine = create_engine(database_url)
         self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
         Base.metadata.create_all(bind=self.engine)
+
+    def _create_db(self):
+                # Check if the database exists
+        if not database_exists(self.database_url):
+            print("Database does not exist, creating...")
+            create_database(self.database_url)
+            print("Database created.")
+        else:
+            print("Database already exists.")
 
     def get_db(self):
         db = self.SessionLocal()
@@ -22,6 +36,7 @@ class PostgresStore:
             yield db
         finally:
             db.close()
+
     def backup_to_csv(self, backup_dir='backup'):
         """
         Back up all tables to CSV files in the specified directory.
@@ -49,14 +64,14 @@ class PostgresStore:
 
 # Database models
 class UserInDB(Base):
-    __tablename__ = 'users'
+    __tablename__ = USER_TABLE_NAME
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
 
 class Resume(Base):
-    __tablename__ = 'resumes'
+    __tablename__ = RESUME_TABLE_NAME
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, index=True)

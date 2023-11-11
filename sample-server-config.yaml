@@ -3,7 +3,7 @@ service:
   port: 9000
   workers: 1
   data-path: my-data/
-  secret-key: xxx
+  secret-key: default_key
   hash-algorithm: HS256
   access-token-expire-minutes: 10000
   token-url: token
@@ -13,7 +13,7 @@ service:
   
 table-store:
   postgres:
-   url: "postgresql://applibot_user:xxx@localhost/applibot_db"
+   url: "postgresql://applibot_user:default_password@localhost/applibot_db"
 
 vector-store:
   lancedb:
@@ -24,10 +24,10 @@ vector-store:
 chat-model:
   model-name: gpt-4-1106-preview
   temperature: 0.0
-  key: sk-xxx
+  key: sk-change_this_default_key
   cache: True
 
 embeddings-model:
   name: OpenAIEmbeddings
-  key: sk-xxx
+  key: sk-change_this_default_key
   cache: True

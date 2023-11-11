@@ -1,4 +1,6 @@
 **About "Applibot"**
+# **About "Applibot"**
+
 Applibot is crafted with **Retrieval Augmented Generation (RAG)** at its heart, serving as a guiding companion in the job-seeking saga. More than a mere application aid, Applibot is your strategic partner, designed to streamline the complexities of job hunting across all professions.
 
 The essence of Applibot lies in its ability to smarten your professional footprint. It neatly organizes your resumes, dresses your information in polished templates, and helps articulate cover letters that capture your unique voice. Beyond mere document management, Applibot draws upon your own experiences to provide nuanced responses to inquiries, direct messages, and personalized expressions of interest that align with the roles you aspire to fill.
@@ -7,7 +9,7 @@ With an analytical feature that maps your abilities against job requirements, Ap
 
 Security and simplicity are pillars of the Applibot experience, ensuring peace of mind and a straightforward, user-friendly interface. Whether you're a seasoned professional or just starting out, Applibot is here to support your journey to the next opportunity. Let's take the leap into your future career together. 🚀
 
-**Note**: To fully harness the capabilities of Applibot, particularly the ones that interact with the GPT-4 model, you'll need an OpenAI API key that can access GPT-4. As of now, the GPT-4 access is a premium feature. Ensure you possess the necessary permissions.
+**Note**: To fully harness the capabilities of Applibot, particularly the ones that interact with the **GPT-4 model**, you'll need an OpenAI API key that can access GPT-4. As of now, **the GPT-4 access is a premium feature**. Ensure you possess the necessary permissions.
 
 **Steps to Obtain an OpenAI API Key:**
 
@@ -22,11 +24,18 @@ Security and simplicity are pillars of the Applibot experience, ensuring peace o
 
 ## Installation
 
-To install and set up the application, you can either use a virtual environment or Docker:
+Clone the project and navigate to its directory:
+
+```bash
+git clone https://github.com/supriyopaul/applibot
+cd applibot
+```
+
+Choose between a virtual environment or Docker for setup:
 
 ### Virtual Environment Setup:
 
-1. **Create a virtual environment and activate it**:
+1. **Create and activate a virtual environment**:
     ```bash
     python3.9 -m venv ./venv
     source venv/bin/activate
@@ -46,7 +55,7 @@ To install and set up the application, you can either use a virtual environment 
 
 ## Configuration
 
-Before running the application, you will need to set up your configuration file. You can start by copying the sample configuration and modifying it to suit your needs.
+Set up your configuration file from the provided sample:
 
 1. **Copy the sample configuration file**:
     ```bash
@@ -58,13 +67,48 @@ Before running the application, you will need to set up your configuration file.
     nano my-config-file.yaml
     ```
 
-***Important*:** Ensure that your** OpenAI API key** (`chat-model.key` and `embeddings-model.key`) is correctly configured and has access to the required models and services, as the GPT-4 model is a paid service and requires proper authentication and authorization.
+***Important***: Confirm your OpenAI API key is correctly set:
 
-   Save and exit the editor.
+```bash
+$ grep -B 4 "change_this" ./my-config-file.yaml
+
+chat-model:
+  model-name: gpt-4-1106-preview
+  temperature: 0.0
+  key: sk-change_this_default_key
+  cache: True
+
+embeddings-model:
+  name: OpenAIEmbeddings
+  key: sk-change_this_default_key
+```
+
+Make sure to replace `change_this_default_key` with your actual API keys.
+
+## DB Setup
+
+Set up a PostgreSQL database for Applibot:
+
+```bash
+docker run -itd -e POSTGRES_USER=applibot_user -e POSTGRES_PASSWORD=default_password -p 5432:5432 -v ./my-data/postgresql:/var/lib/postgresql/data --name postgresql postgres
+```
+
+***Important***: Update the database URL in the configuration file to match your credentials:
+
+```bash
+$ grep -B 4 "postgresql" ./sample-server-config.yaml
+  pwd-context-depricated: auto
+  
+table-store:
+  postgres:
+    url: "postgresql://applibot_user:default_password@localhost/applibot_db"
+```
+
+Replace `applibot_user` and `default_password` with your PostgreSQL credentials.
 
 ## Run
 
-Depending on your installation method, choose the appropriate run command:
+Launch Applibot:
 
 ### For Virtual Environment:
 
@@ -72,11 +116,9 @@ Depending on your installation method, choose the appropriate run command:
 python -m applibot.server --config my-config-file.yaml
 ```
 
-This will start the application, making it accessible on the specified host and port in your configuration file (default is `0.0.0.0:9000`).
-
 ### For Docker:
 
-Ensure that the path to your configuration file is correctly mapped:
+Map your configuration file path correctly:
 
 ```bash
 docker run \
@@ -86,10 +128,27 @@ docker run \
     applibot:latest
 ```
 
-The Docker container will start, and the application will be accessible on the host's port `9000`.
+### Accessing the API Documentation
+When everything goes fine, you should see:
 
+```
+Database does not exist, creating...
+Database created.
+INFO:     Started server process [86118]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:9000 (Press CTRL+C to quit)
+```
 
-## Postgres setup
+You can access the API documentation and try out the API using the service host and port specified in your configuration file:
+
+```bash
+$ grep -A 4 "service" ./sample-server-config.yaml
+service:
+  host: 0.0.0.0
+  port: 9000
+  workers: 1
+  data-path: my-data/
 ```
-docker run -itd -e POSTGRES_USER=applibot_user -e POSTGRES_PASSWORD=change_this_password -p 5432:5432 -v ./my-data/postgresql:/var/lib/postgresql/data --name postgresql postgres
-```
+
+In this case, the API documentation would be available at: [http://localhost:9000/docs](http://localhost:9000/docs)
