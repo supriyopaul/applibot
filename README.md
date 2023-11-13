@@ -1,4 +1,5 @@
-**About "Applibot"**
+![Apllibot Logo](https://github.com/supriyopaul/applibot/assets/33823698/7b4699fe-e749-44c2-bd69-47b7ad456beb)
+
 # **About "Applibot"**
 
 Applibot is crafted with **Retrieval Augmented Generation (RAG)** at its heart, serving as a guiding companion in the job-seeking saga. More than a mere application aid, Applibot is your strategic partner, designed to streamline the complexities of job hunting across all professions.
