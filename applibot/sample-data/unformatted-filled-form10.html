@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Technical & Project Inquiry Form</title>
+</head>
+<body>
+    <h2>Advanced Technical & Project Inquiry</h2>
+
+    <form action="/submit-technical-inquiry" method="post">
+        <fieldset>
+            <legend>Contact & Personal</legend>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" value="Richard Hendricks" readonly><br><br>
+
+            <label for="primary-email">Primary Email:</label>
+            <input type="email" id="primary-email" name="primary_email" value="rhendricks@piedpiper.com" readonly><br><br>
+
+            <label for="backup-email">Backup Email:</label>
+            <input type="email" id="backup-email" name="backup_email" value="richard.hendricks1985@gmail.com" readonly><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Current Frameworks</legend>
+            <label>Main:</label>
+            <input type="text" value="Hadoop, Spark" readonly><br><br>
+            
+            <label>Secondary:</label>
+            <input type="text" value="React, Django" readonly><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Platforms Worked</legend>
+            <label for="platforms">Platforms:</label>
+            <textarea id="platforms" name="platforms" readonly>Windows, macOS, Linux Distros (Primarily Ubuntu and CentOS)</textarea><br><br>
+
+            <label for="coding-snack">Favorite Coding Snack:</label>
+            <input type="text" id="coding-snack" name="coding_snack" value="Pretzels" readonly><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Notable Projects</legend>
+            <label for="project1">Pied Piper Compression Algorithm:</label>
+            <textarea id="project1" name="project1" readonly>Achieved industry-leading compression rates.</textarea><br><br>
+
+            <label for="project2">New Internet Concept:</label>
+            <textarea id="project2" name="project2" readonly>A decentralized internet platform, ensuring data privacy.</textarea><br><br>
+        </fieldset>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

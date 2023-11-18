@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal History & Preferences Form</title>
+</head>
+<body>
+    <h2>Personal History & Preferences</h2>
+
+    <form action="/submit-personal-history" method="post">
+        <fieldset>
+            <legend>Basic Info</legend>
+            <label for="dob">DOB:</label>
+            <input type="text" id="dob" name="dob" value="04/12/1985" readonly><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Addresses</legend>
+            <label for="current-address">Current:</label>
+            <textarea id="current-address" name="current_address" readonly>324 Aviato Blvd, San Francisco, CA, USA</textarea><br><br>
+
+            <label for="previous-address">Previous:</label>
+            <textarea id="previous-address" name="previous_address" readonly>127 Palo Alto St., Palo Alto, CA, USA</textarea><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Music Taste</legend>
+            <label for="music-genres">Genres:</label>
+            <input type="text" id="music-genres" name="music_genres" value="Classical, Ambient Techno" readonly><br><br>
+
+            <label for="favorite-band">Favorite Band:</label>
+            <input type="text" id="favorite-band" name="favorite_band" value="The Chemical Brothers" readonly><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Color Preferences</legend>
+            <label for="shirt-color">Shirt:</label>
+            <input type="text" id="shirt-color" name="shirt_color" value="Light Blue" readonly><br><br>
+
+            <label for="theme-preference">Web UI Theme:</label>
+            <input type="text" id="theme-preference" name="theme_preference" value="Dark Mode" readonly><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Remote Work</legend>
+            <label for="remote-work">Thoughts on remote work:</label>
+            <textarea id="remote-work" name="remote_work" readonly>"Remote work offers flexibility, but I prefer in-person interactions for brainstorming sessions."</textarea><br><br>
+        </fieldset>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

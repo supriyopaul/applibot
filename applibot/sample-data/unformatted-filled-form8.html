@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detailed Work Experience Form</title>
+</head>
+<body>
+    <h2>Detailed Work Experience</h2>
+
+    <form action="/submit-work-experience" method="post">
+        <fieldset>
+            <legend>Applicant Information</legend>
+            <label for="full-name">Full Name:</label>
+            <input type="text" id="full-name" name="full_name" value="Richard Hendricks" readonly><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Prior Positions</legend>
+            <div>
+                <h3>Lead Software Engineer at Hooli</h3>
+                <label for="lead-role-duration">Duration:</label>
+                <input type="text" id="lead-role-duration" name="lead_role_duration" value="2 years" readonly><br><br>
+
+                <label>Key Achievements:</label>
+                <ul>
+                    <li><input type="text" value="Improved system performance by 40%." readonly></li>
+                    <li><input type="text" value="Mentored a team of junior developers." readonly></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Intern at Hooli</h3>
+                <label for="intern-duration">Duration:</label>
+                <input type="text" id="intern-duration" name="intern_duration" value="6 months" readonly><br><br>
+
+                <label for="intern-experience">Learning Experience:</label>
+                <textarea id="intern-experience" name="intern_experience" readonly>"It was at Hooli where I started envisioning the future of data compression."</textarea><br><br>
+            </div>
+        </fieldset>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

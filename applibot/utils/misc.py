@@ -55,6 +55,21 @@ RESET = '\033[0m'
 def color_text(text, color_code):
     return f"{color_code}{text}{RESET}"
 
+def print_red(text):
+    print(color_text(text, RED))
+
+def print_orange(text):
+    print(color_text(text, ORANGE))
+
+def print_green(text):
+    print(color_text(text, GREEN))
+
+def print_purple(text):
+    print(color_text(text, PURPLE))
+
+def print_yellow(text):
+    print(color_text(text, YELLOW))
+
 def get_multiline_input(prompt):
     print(color_text(prompt, GREEN))
     lines = []

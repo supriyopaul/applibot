@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Netflix Job Application Form</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f8f8f8;
+                margin: 0;
+                padding: 20px;
+            }
+    
+            .container {
+                max-width: 700px;
+                margin: 20px auto;
+                background: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+    
+            h1 {
+                color: #E50914;
+                font-size: 24px;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+    
+            form {
+                display: grid;
+                grid-gap: 15px;
+                padding: 20px;
+            }
+    
+            fieldset {
+                border: none;
+                padding: 0;
+                margin: 0 0 20px 0;
+            }
+    
+            legend {
+                font-size: 18px;
+                font-weight: bold;
+                margin-bottom: 10px;
+                color: #333;
+            }
+    
+            label {
+                display: block;
+                margin: 0 0 5px 0;
+            }
+    
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            input[type="date"],
+            input[type="url"],
+            textarea,
+            select {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+                margin-bottom: 15px;
+            }
+    
+            input[type="checkbox"] {
+                margin-right: 5px;
+            }
+    
+            input[type="submit"] {
+                width: auto;
+                background-color: #E50914;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 16px;
+                transition: background-color 0.3s;
+            }
+    
+            input[type="submit"]:hover {
+                background-color: #b20710;
+            }
+    
+        </style>
+    </head>
+<body>
+    <h1>Netflix Job Application Form</h1>
+    
+    <form action="submit-application-endpoint" method="post">
+        <fieldset>
+            <legend>Personal Information</legend>
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" required><br><br>
+
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" name="email" required><br><br>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" required><br><br>
+
+            <label for="address">Current Address:</label>
+            <input type="text" id="address" name="address" required><br><br>
+
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" name="dob" required><br><br>
+
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+                <option value="prefer_not_to_say">Prefer not to say</option>
+            </select><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Professional Experience</legend>
+            <label for="current-role">Current Job Title:</label>
+            <input type="text" id="current-role" name="current_role" required><br><br>
+
+            <label for="current-company">Company:</label>
+            <input type="text" id="current-company" name="current_company" required><br><br>
+
+            <label for="experience-description">Role Description:</label>
+            <textarea id="experience-description" name="experience_description" rows="4" required></textarea><br><br>
+
+            <label for="past-role">Previous Job Title:</label>
+            <input type="text" id="past-role" name="past_role"><br><br>
+
+            <label for="past-company">Company:</label>
+            <input type="text" id="past-company" name="past_company"><br><br>
+
+            <label for="past-description">Role Description:</label>
+            <textarea id="past-description" name="past_description" rows="4"></textarea><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Education</legend>
+            <label for="highest-degree">Highest Degree Earned:</label>
+            <input type="text" id="highest-degree" name="highest_degree" required><br><br>
+
+            <label for="university">School or University:</label>
+            <input type="text" id="university" name="university" required><br><br>
+
+            <label for="field-of-study">Field of Study:</label>
+            <input type="text" id="field-of-study" name="field_of_study" required><br><br>
+
+            <label for="gpa">GPA (if applicable):</label>
+            <input type="text" id="gpa" name="gpa"><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Skills and Certifications</legend>
+            <label for="skills">Technical Skills:</label>
+            <textarea id="skills" name="skills" rows="4" required></textarea><br><br>
+
+            <label for="certifications">Certifications:</label>
+            <textarea id="certifications" name="certifications" rows="4"></textarea><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Additional Information</legend>
+            <label for="linkedin">LinkedIn Profile:</label>
+            <input type="url" id="linkedin" name="linkedin"><br><br>
+
+            <label for="github">GitHub URL:</label>
+            <input type="url" id="github" name="github"><br><br>
+
+            <label for="relocation">Willing to relocate?</label>
+            <input type="checkbox" id="relocation" name="relocation" value="yes"> Yes<br><br>
+
+            <label for="legally-authorized">Are you legally authorized to work in the job location country?</label>
+            <input type="checkbox" id="legally-authorized" name="legally_authorized" value="yes" required> Yes<br><br>
+
+            <label for="age-confirmation">I confirm I am over 18 years of age.</label>
+            <input type="checkbox" id="age-confirmation" name="age_confirmation" value="yes" required> Yes<br><br>
+        </fieldset>
+
+        <input type="submit" value="Submit Application">
+    </form>
+
+</body>
+</html>

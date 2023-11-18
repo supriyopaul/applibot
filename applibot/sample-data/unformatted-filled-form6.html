@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hobbies, Activities, & Behavioral Traits Form</title>
+</head>
+<body>
+    <h2>Hobbies, Activities, & Behavioral Traits</h2>
+
+    <form action="/submit-personal-info" method="post">
+        <fieldset>
+            <legend>Recreational Activities Enjoyed</legend>
+            <label for="activities">Activities:</label>
+            <textarea id="activities" name="activities" readonly>Reading technical journals, Coding for fun, Hiking</textarea><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Leadership Instance</legend>
+            <label for="leadership">Describe an instance where you showcased leadership:</label>
+            <textarea id="leadership" name="leadership" readonly>Guided Pied Piper through numerous challenges, including patent lawsuits and competitive threats, leading to the successful launch of our compression platform.</textarea><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Challenging Coworker/Situation</legend>
+            <label for="challenge">Describe a challenging coworker or situation. How did you handle it?</label>
+            <textarea id="challenge" name="challenge" readonly>Faced challenges with Erlich Bachman, a former business partner. Open communication, negotiation, and sometimes compromise helped navigate these difficulties.</textarea><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Stress Management</legend>
+            <label for="stress">How do you handle stress or high-pressure situations?</label>
+            <textarea id="stress" name="stress" readonly>Focus on the bigger picture, deep-breathing exercises, and seeking advice from trusted team members.</textarea><br><br>
+        </fieldset>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

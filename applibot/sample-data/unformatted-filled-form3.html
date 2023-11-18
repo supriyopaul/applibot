@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>In-depth Professional Analysis Form</title>
+</head>
+<body>
+    <h2>In-depth Professional Analysis</h2>
+
+    <form action="/submit-details" method="post">
+        <fieldset>
+            <legend>Present Role</legend>
+            <label for="current-title">Title:</label>
+            <input type="text" id="current-title" name="current_title" value="CEO & Founder" readonly><br><br>
+
+            <label for="current-company">Company:</label>
+            <input type="text" id="current-company" name="current_company" value="Pied Piper" readonly><br><br>
+
+            <label for="current-responsibilities">Responsibilities:</label>
+            <textarea id="current-responsibilities" name="current_responsibilities" readonly>Managing and leading teams, Decision making</textarea><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Prior Position</legend>
+            <label for="previous-title">Title:</label>
+            <input type="text" id="previous-title" name="previous_title" value="Software Developer" readonly><br><br>
+
+            <label for="previous-company">Company:</label>
+            <input type="text" id="previous-company" name="previous_company" value="Hooli" readonly><br><br>
+
+            <label for="previous-duration">Duration:</label>
+            <input type="text" id="previous-duration" name="previous_duration" value="2 years" readonly><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Compensation Details</legend>
+            <label for="current-salary">Present Salary (Annually):</label>
+            <input type="text" id="current-salary" name="current_salary" value="$200,000" readonly><br><br>
+
+            <label for="desired-compensation">Desired Compensation (Annually):</label>
+            <input type="text" id="desired-compensation" name="desired_compensation" value="$260,000 + Equity" readonly><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Public Profiles</legend>
+            <label for="linkedin">LinkedIn:</label>
+            <input type="url" id="linkedin" name="linkedin" value="https://www.linkedin.com/in/rhendricks" readonly><br><br>
+
+            <label for="github">GitHub:</label>
+            <input type="url" id="github" name="github" value="https://github.com/rhendricks" readonly><br><br>
+        </fieldset>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

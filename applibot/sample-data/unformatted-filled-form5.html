@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional & Personal Contacts Form</title>
+</head>
+<body>
+    <h2>Contacts (Professional & Personal)</h2>
+
+    <form action="/submit-contacts" method="post">
+        <fieldset>
+            <legend>First Professional Reference</legend>
+            <label for="ref1-name">Name:</label>
+            <input type="text" id="ref1-name" name="ref1_name" value="Dinesh Chugtai" readonly><br><br>
+
+            <label for="ref1-company">Company:</label>
+            <input type="text" id="ref1-company" name="ref1_company" value="Pied Piper" readonly><br><br>
+
+            <label for="ref1-email">Email:</label>
+            <input type="email" id="ref1-email" name="ref1_email" value="dinesh@piedpiper.com" readonly><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>Second Professional Reference</legend>
+            <label for="ref2-name">Name:</label>
+            <input type="text" id="ref2-name" name="ref2_name" value="Gilfoyle" readonly><br><br>
+
+            <label for="ref2-affiliation">Affiliation:</label>
+            <input type="text" id="ref2-affiliation" name="ref2_affiliation" value="Pied Piper" readonly><br><br>
+
+            <label for="ref2-phone">Contact Number:</label>
+            <input type="tel" id="ref2-phone" name="ref2_phone" value="+1 555-654-3210" readonly><br><br>
+        </fieldset>
+
+        <fieldset>
+            <legend>In Case of Emergency Contact</legend>
+            <label for="emergency-name">Name:</label>
+            <input type="text" id="emergency-name" name="emergency_name" value="Jared Dunn" readonly><br><br>
+
+            <label for="emergency-relationship">Relationship:</label>
+            <input type="text" id="emergency-relationship" name="emergency_relationship" value="Close Friend & Advisor" readonly><br><br>
+
+            <label for="emergency-phone">Phone:</label>
+            <input type="tel" id="emergency-phone" name="emergency_phone" value="+1 555-789-0123" readonly><br><br>
+        </fieldset>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
