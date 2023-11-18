@@ -1,0 +1,163 @@
+This is my html for resume.html:
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title></title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <nav class="navbar">
+            <img src="applibot-logo.png" alt="Applibot Logo" class="logo">
+            <div class="nav-links">
+                <a href="index.html">About</a>
+                <a href="resume.html">Resume</a>
+                <a href="info.html">Info</a>
+                <a href="generate.html">Generate</a>
+                <button class="nav-button">Logout</button>
+            </div>
+        </nav>
+        <div class="resume-container">
+            <div id="resumeBox" contenteditable="true"></div>
+            <div class="resume-buttons">
+                <button id="resumeSaveButton" onclick="saveResume()">Save</button>
+            </div>
+        </div>
+        <script src="script.js"></script>
+    </body>
+    <footer class="footer">
+        <div class="social-links">
+            <a href="https://github.com/supriyopaul/applibot" target="_blank">Github</a>
+            <a href="https://www.linkedin.com/in/supriyopaul95" target="_blank">LinkedIN</a>
+            <a href="mailto:paul.supriyo.paul@gmail.com" target="_blank">Gmail</a>
+        </div>
+    </footer>
+</html>
+
+
+Make 3 tabs to Display latest, save, manage resume similar to:
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Information Manager</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+
+    <body>
+        <nav class="navbar">
+            <img src="applibot-logo.png" alt="Applibot Logo" class="logo">
+            <div class="nav-links">
+                <a href="index.html">About</a>
+                <a href="resume.html">Resume</a>
+                <a href="info.html">Info</a>
+                <a href="generate.html">Generate</a>
+                <button class="nav-button">Logout</button>
+            </div>
+        </nav>
+        <div class="tab-container">
+            <div class="tab">
+                <button class="tablinks"
+                    onclick="openTab(event, 'FormatInformation')">Format
+                    Information</button>
+                <button class="tablinks"
+                    onclick="openTab(event, 'SaveInformation')">Save Information</button>
+                <button class="tablinks"
+                    onclick="openTab(event, 'ManageSavedInformation')">Manage
+                    Saved Information</button>
+            </div>
+
+            <div id="FormatInformation" class="tabcontent">
+                <textarea id="formatInput"
+                    placeholder="Enter unformatted information here"></textarea>
+                <button onclick="formatText('formatInput', 'formatOutput')">Format</button>
+                <textarea id="formatOutput"></textarea>
+                <button onclick="copyToClipboard('formatOutput')">Copy to
+                    clipboard</button>
+            </div>
+
+            <div id="SaveInformation" class="tabcontent">
+                <textarea id="saveInput"
+                    placeholder="Enter unformatted information here"></textarea>
+                <button onclick="saveText('saveInput', 'saveOutput')">Format &
+                    Save</button>
+                <textarea id="saveOutput"></textarea>
+                <button onclick="copyToClipboard('saveOutput')">Copy to
+                    clipboard</button>
+            </div>
+
+            <div id="ManageSavedInformation" class="tabcontent">
+                <h2>Manage Your Saved Information</h2>
+                <div id="savedInfoList">
+                    <!-- Dynamically populated list of saved information -->
+                </div>
+                <button onclick="listSavedInfo()">Refresh List</button>
+                <div id="editSection" style="display:none;">
+                    <textarea id="editInput"></textarea>
+                    <button onclick="updateInfo(currentEditingId)">Update</button>
+                    <button onclick="deleteInfo(currentEditingId)">Delete</button>
+                </div>
+            </div>
+            <script src="script.js"></script>
+        </body>
+        <footer class="footer">
+            <div class="social-links">
+                <a href="https://github.com/supriyopaul/applibot"
+                    target="_blank">Github</a>
+                <a href="https://www.linkedin.com/in/supriyopaul95"
+                    target="_blank">LinkedIN</a>
+                <a href="mailto:paul.supriyo.paul@gmail.com" target="_blank">Gmail</a>
+            </div>
+        </footer>
+    </html>
+
+
+THis is a sample call for getting the latest resume and saving one, deleting:
+curl -X 'GET' \
+  'http://localhost:9999/resumes/latest' \
+  -H 'accept: application/json' \
+  -H 'token: xxx'
+{
+  "id": 4,
+  "content": "",
+  "created_at": "2023-11-15T05:04:52.230455Z"
+}
+
+curl -X 'POST' \
+  'http://localhost:9999/resume/' \
+  -H 'accept: application/json' \
+  -H 'token: xxx' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'resume_content=xxx'
+
+{
+  "id": 0,
+  "content": "xxx",
+  "created_at": "2023-11-17T17:07:02.070Z"
+}
+
+curl -X 'GET' \
+  'http://localhost:9999/resumes/' \
+  -H 'accept: application/json' \
+  -H 'token: xxx'
+
+[
+  {
+    "id": 0,
+    "content": "string",
+    "created_at": "2023-11-18T13:17:31.180Z"
+  }
+]
+
+curl -X 'DELETE' \
+  'http://localhost:9999/resume/?resume_id=1' \
+  -H 'accept: application/json' \
+  -H 'token: xxx'
+
+{
+"message": "Resume with id 1 deleted successfully."
+}
+
+Provide me with the new html and javascript

@@ -236,8 +236,8 @@ async def get_resumes_for_user(
     db: Session = Depends(db_store.get_db)
 ):
     """API endpoint to retrieve all resumes for a specific user, if authorized."""
-    db_resumes = db.query(Resume).filter(Resume.user_id == user_id).all()
-    return db_resumes
+    user_resumes = db.query(Resume).filter(Resume.user_id == current_user.id).all()
+    return user_resumes
 
 @app.delete("/resume/", response_model=dict)
 async def delete_resume(
