@@ -4,6 +4,7 @@ import argparse
 import functools
 
 import numpy as np
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Depends, HTTPException, status, Header, Form
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
@@ -24,12 +25,19 @@ from applibot.utils.config_loader import load_config
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 parser = argparse.ArgumentParser(description='Run the Applibot server.')
 parser.add_argument('--config', required=True, type=str, help='Path to the configuration YAML file.')
 args = parser.parse_args()
 config = load_config(args.config)
 db_store = config.objects.postgres_store
-app = FastAPI()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=config.raw.service.token_url)
 pwd_context = CryptContext(schemes=config.raw.service.pwd_context_schemes, deprecated=config.raw.service.pwd_context_depricated)
 embedding = config.objects.embedding
@@ -289,7 +297,7 @@ async def post_questions_route(
     answers = await format_and_predict("question_response", questions=extracted_questions, resume=latest_resume, info_text=relevant_info_texts)
     return answers
 
-@app.get("/users/{user_id}/infos/")
+@app.get("/users/infos/")
 async def get_user_infos(
     current_user: UserInDB = Depends(get_current_user)
 ):
@@ -298,7 +306,7 @@ async def get_user_infos(
     user_infos_df = user_infos_df.drop(columns=['vector'])
     return user_infos_df.to_dict('records')
 
-@app.delete("/info/{info_id}/")
+@app.delete("/info/")
 async def delete_info_route(
     info_id: str,
     current_user: UserInDB = Depends(get_current_user)

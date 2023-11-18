@@ -1,0 +1,85 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document Generator</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <nav class="navbar">
+            <img src="applibot-logo.png" alt="Applibot Logo" class="logo">
+            <div class="nav-links">
+                <a href="index.html">About</a>
+                <a href="resume.html">Resume</a>
+                <a href="info.html">Info</a>
+                <a href="generate.html">Generate</a>
+                <button class="nav-button">Logout</button>
+            </div>
+        </nav>
+        <div class="tab-container">
+            <div class="tab">
+                <button class="tablinks" onclick="openTab(event, 'SkillMatch')">Skill
+                    Match</button>
+                <button class="tablinks"
+                    onclick="openTab(event, 'ExpressionOfInterest')">Expression
+                    of Interest</button>
+                <button class="tablinks" onclick="openTab(event, 'CoverLetter')">Cover
+                    Letter</button>
+                <button class="tablinks" onclick="openTab(event, 'FormFillUp')">Form
+                    Fill-Up</button>
+                <button class="tablinks" onclick="openTab(event, 'DMReply')">DM
+                    Reply</button>
+            </div>
+
+            <div id="SkillMatch" class="tabcontent">
+                <textarea id="skillMatchInput" placeholder="Enter Job description"></textarea>
+                <button onclick="generateText('skillMatchInput', 'skillMatchOutput', event)">Generate</button>
+                <textarea id="skillMatchOutput" placeholder="Generated skill match will appear here"></textarea>
+                <button onclick="copyToClipboard('skillMatchOutput')">Copy to clipboard</button>
+            </div>
+
+            <div id="ExpressionOfInterest" class="tabcontent">
+                <textarea id="expressionInput"
+                    placeholder="Enter Job description"></textarea>
+                <button
+                    onclick="generateText('expressionInput', 'expressionOutput')">Generate</button>
+                <textarea id="expressionOutput"></textarea>
+                <button onclick="copyToClipboard('expressionOutput')">Copy to
+                    clipboard</button>
+            </div>
+
+            <div id="CoverLetter" class="tabcontent">
+                <textarea id="coverInput" placeholder="Enter Job description"></textarea>
+                <button onclick="generateText('coverInput', 'coverOutput')">Generate</button>
+                <textarea id="coverOutput"></textarea>
+                <button onclick="copyToClipboard('coverOutput')">Copy to
+                    clipboard</button>
+            </div>
+
+            <div id="FormFillUp" class="tabcontent">
+                <textarea id="formInput" placeholder="Paste empty Form Fields"></textarea>
+                <button onclick="generateText('formInput', 'formOutput')">Generate</button>
+                <textarea id="formOutput"></textarea>
+                <button onclick="copyToClipboard('formOutput')">Copy to
+                    clipboard</button>
+            </div>
+
+            <div id="DMReply" class="tabcontent">
+                <textarea id="dmInput" placeholder="Enter recruiter's DM"></textarea>
+                <textarea id="dmJdInput" placeholder="Enter Job description"></textarea>
+                <button
+                    onclick="generateText('dmInput', 'dmOutput', 'dmJdInput')">Generate</button>
+                <textarea id="dmOutput"></textarea>
+                <button onclick="copyToClipboard('dmOutput')">Copy to clipboard</button>
+            </div>
+        </div>
+        <script src="script.js"></script>
+    </body>
+    <footer class="footer">
+        <div class="social-links">
+            <a href="https://github.com/supriyopaul/applibot" target="_blank">Github</a>
+            <a href="https://www.linkedin.com/in/supriyopaul95" target="_blank">LinkedIN</a>
+            <a href="mailto:paul.supriyo.paul@gmail.com" target="_blank">Gmail</a>
+        </div>
+    </footer>
+</html>
