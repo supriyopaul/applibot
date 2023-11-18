@@ -345,19 +345,21 @@ button:hover {
     transition: background-color 0.3s;
 }
 
-
-#resumeBox {
-    min-height: 400px;
-    max-height: 600px;
-    border: 1px solid #e6e6e6;
-    padding: 20px;
-    margin-bottom: 20px;
-    margin-top: 20px;
-    background: #fafafa;
-    overflow-y: auto;
+.delete-resume, .delete-info {
+    background-color: #ed7168;
+    margin-top: 10px; /* Adjust as needed */
 }
 
-.resume-buttons {
-    text-align: right;
+.delete-resume:hover, .delete-info:hover {
+    background-color: #e05a57; /* Slightly darker shade for hover effect */
 }
 
+/* Style for the resume content in the manage section */
+.resume-item pre, .info-item pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}

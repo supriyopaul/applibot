@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title></title>
+        <title>Resume Manager</title>
         <link rel="stylesheet" href="styles.css">
     </head>
     <body>
@@ -17,10 +17,29 @@
                 <button class="nav-button">Logout</button>
             </div>
         </nav>
-        <div class="resume-container">
-            <div id="resumeBox" contenteditable="true"></div>
-            <div class="resume-buttons">
-                <button id="resumeSaveButton" onclick="saveResume()">Save</button>
+        <div class="tab-container">
+            <div class="tab">
+                <button class="tablinks" onclick="openTab(event, 'LatestResume')">Latest Resume</button>
+                <button class="tablinks" onclick="openTab(event, 'SaveResume')">Save Resume</button>
+                <button class="tablinks" onclick="openTab(event, 'ManageResume')">Manage Resume</button>
+            </div>
+
+            <div id="LatestResume" class="tabcontent">
+                <button onclick="fetchAndDisplayLatestResume()">Refresh Latest Resume</button>
+                <div id="latestResumeBox"></div>
+            </div>
+
+            <div id="SaveResume" class="tabcontent">
+                <textarea id="resumeInput" placeholder="Enter your resume here"></textarea>
+                <button onclick="saveResume()">Save</button>
+            </div>
+
+            <div id="ManageResume" class="tabcontent">
+                <h2>Manage Your Resumes</h2>
+                <div id="resumeList">
+                    <!-- Dynamically populated list of resumes -->
+                </div>
+                <button onclick="listResumes()">Refresh List</button>
             </div>
         </div>
         <script src="script.js"></script>

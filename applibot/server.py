@@ -45,6 +45,7 @@ llm = config.objects.llm
 info_store = config.objects.info_store
 
 INFO_RETRIEVAL_LIMIT = 5
+ALL_INFO_LIMIT = 1000
 
 templates = {
     "question_extraction": PromptTemplate(input_variables=["unformatted_info"], template=QUESTION_EXTRACTION_TEMPLATE),
@@ -302,7 +303,7 @@ async def get_user_infos(
     current_user: UserInDB = Depends(get_current_user)
 ):
     """API endpoint to get all information entries for a specific user."""
-    user_infos_df = info_store.table.search().where(f'user_id="{current_user.id}"').to_df()
+    user_infos_df = info_store.table.search().where(f'user_id="{current_user.id}"').limit(ALL_INFO_LIMIT).to_df()
     user_infos_df = user_infos_df.drop(columns=['vector'])
     return user_infos_df.to_dict('records')
 

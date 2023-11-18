@@ -240,3 +240,191 @@ function generateText(inputId, outputId) {
             alert(error.message || "An error occurred during text generation.");
         });
 }
+
+function fetchAndDisplayLatestResume() {
+    const token = localStorage.getItem('applibotAccessToken');
+    if (!token) {
+        alert('Access token not found. Please log in.');
+        return;
+    }
+
+    fetch(`${apiBaseUrl}/resumes/latest`, {
+        method: 'GET',
+        headers: {
+            'accept': 'application/json',
+            'token': token
+        }
+    })
+    .then(handleApiResponse)
+    .then(data => {
+        const latestResumeBox = document.getElementById('latestResumeBox');
+        latestResumeBox.innerText = data.content;
+    })
+    .catch(handleApiError);
+}
+
+function saveResume() {
+    const token = localStorage.getItem('applibotAccessToken');
+    if (!token) {
+        alert('Access token not found. Please log in.');
+        return;
+    }
+
+    const resumeContent = document.getElementById('resumeInput').value;
+    const formData = new URLSearchParams();
+    formData.append('resume_content', resumeContent);
+
+    fetch(`${apiBaseUrl}/resume/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'accept': 'application/json',
+            'token': token
+        },
+        body: formData
+    })
+    .then(handleApiResponse)
+    .then(() => {
+        alert('Resume saved successfully.');
+    })
+    .catch(handleApiError);
+}
+
+function listResumes() {
+    const token = localStorage.getItem('applibotAccessToken');
+    if (!token) {
+        alert('Access token not found. Please log in.');
+        return;
+    }
+
+    fetch(`${apiBaseUrl}/resumes/`, {
+        method: 'GET',
+        headers: {
+            'accept': 'application/json',
+            'token': token
+        }
+    })
+    .then(handleApiResponse)
+    .then(data => {
+        const resumeList = document.getElementById('resumeList');
+        resumeList.innerHTML = data.map(resume => `
+            <div class="resume-item">
+                <pre>${resume.content}</pre>
+                <button class="nav-button delete-resume" onclick="deleteResume(${resume.id})">Delete</button>
+            </div>
+        `).join('');
+    })
+    .catch(handleApiError);
+}
+
+
+function deleteResume(resumeId) {
+    const token = localStorage.getItem('applibotAccessToken');
+    if (!token) {
+        alert('Access token not found. Please log in.');
+        return;
+    }
+
+    fetch(`${apiBaseUrl}/resume/?resume_id=${resumeId}`, {
+        method: 'DELETE',
+        headers: {
+            'accept': 'application/json',
+            'token': token
+        }
+    })
+    .then(handleApiResponse)
+    .then(() => {
+        alert(`Resume with id ${resumeId} deleted successfully.`);
+        listResumes(); // Refresh the resume list
+    })
+    .catch(handleApiError);
+}
+
+function formatText() {
+    var inputText = document.getElementById('formatInput').value;
+    if (!inputText.trim()) {
+        alert('Please enter some text to format.');
+        return;
+    }
+
+    var formData = new URLSearchParams();
+    formData.append('unformatted_info_text', inputText);
+
+    fetch(`${apiBaseUrl}/format-info/`, {
+        method: 'POST',
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData
+    })
+    .then(handleApiResponse)
+    .then(data => {
+        document.getElementById('formatOutput').value = data;
+    })
+    .catch(handleApiError);
+}
+
+function saveText() {
+    var inputText = document.getElementById('saveInput').value;
+    if (!inputText.trim()) {
+        alert('Please enter some text to save.');
+        return;
+    }
+
+    var formData = new URLSearchParams();
+    formData.append('info_text', inputText);
+
+    fetch(`${apiBaseUrl}/info/`, {
+        method: 'POST',
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'token': localStorage.getItem('applibotAccessToken'),
+        },
+        body: formData
+    })
+    .then(handleApiResponse)
+    .then(data => {
+        document.getElementById('saveOutput').value = data.text;
+    })
+    .catch(handleApiError);
+}
+
+function listSavedInfo() {
+    fetch(`${apiBaseUrl}/users/infos/`, {
+        method: 'GET',
+        headers: {
+            'accept': 'application/json',
+            'token': localStorage.getItem('applibotAccessToken'),
+        }
+    })
+    .then(handleApiResponse)
+    .then(data => {
+        const infoList = document.getElementById('infoList');
+        infoList.innerHTML = data.map(info => `
+        <div class="info-item">
+            <pre>${info.text}</pre>
+            <button class="nav-button delete-info" onclick="deleteInfo('${info.id}')">Delete</button>
+        </div>
+        `).join('');
+    })
+    .catch(handleApiError);
+}
+
+
+function deleteInfo(infoId) {
+    fetch(`${apiBaseUrl}/info/?info_id=${infoId}`, {
+        method: 'DELETE',
+        headers: {
+            'accept': 'application/json',
+            'token': localStorage.getItem('applibotAccessToken'),
+        }
+    })
+    .then(handleApiResponse)
+    .then(() => {
+        alert(`Information with id ${infoId} deleted successfully.`);
+        listSavedInfo(); // Refresh the list
+    })
+    .catch(handleApiError);
+}
