@@ -33,7 +33,6 @@ def main():
         Base.metadata.create_all(bind=store.engine)
         print("Database re-created.")
     elif args.action == 'backup':
-        import pdb; pdb.set_trace()
         store.backup_to_csv(backup_dir=backup_dir)
          # Backup LanceDB data to JSON
         lancedb_path = config.objects.info_store.db_path
