@@ -62,6 +62,22 @@ class PostgresStore:
             df.to_sql(table_name, self.engine, if_exists='replace', index=False)
         print("Restore completed from CSV files.")
 
+    def delete_user_and_related_data(self, email: str):
+        """Delete a user and all their resumes."""
+        db = self.SessionLocal()
+        try:
+            user = db.query(UserInDB).filter(UserInDB.email == email).first()
+            if user:
+                db.query(Resume).filter(Resume.user_id == user.id).delete()
+                db.delete(user)
+                db.commit()
+                print(f"Deleted user and associated resumes for {email}")
+                return user.id
+            else:
+                print(f"No user found with email: {email}")
+        finally:
+            db.close()
+
 # Database models
 class UserInDB(Base):
     __tablename__ = USER_TABLE_NAME
