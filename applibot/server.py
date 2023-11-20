@@ -4,6 +4,7 @@ import argparse
 import functools
 
 import numpy as np
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Depends, HTTPException, status, Header, Form
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
@@ -24,12 +25,19 @@ from applibot.utils.config_loader import load_config
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 parser = argparse.ArgumentParser(description='Run the Applibot server.')
 parser.add_argument('--config', required=True, type=str, help='Path to the configuration YAML file.')
 args = parser.parse_args()
 config = load_config(args.config)
 db_store = config.objects.postgres_store
-app = FastAPI()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=config.raw.service.token_url)
 pwd_context = CryptContext(schemes=config.raw.service.pwd_context_schemes, deprecated=config.raw.service.pwd_context_depricated)
 embedding = config.objects.embedding
@@ -37,6 +45,7 @@ llm = config.objects.llm
 info_store = config.objects.info_store
 
 INFO_RETRIEVAL_LIMIT = 5
+ALL_INFO_LIMIT = 1000
 
 templates = {
     "question_extraction": PromptTemplate(input_variables=["unformatted_info"], template=QUESTION_EXTRACTION_TEMPLATE),
@@ -228,8 +237,8 @@ async def get_resumes_for_user(
     db: Session = Depends(db_store.get_db)
 ):
     """API endpoint to retrieve all resumes for a specific user, if authorized."""
-    db_resumes = db.query(Resume).filter(Resume.user_id == user_id).all()
-    return db_resumes
+    user_resumes = db.query(Resume).filter(Resume.user_id == current_user.id).all()
+    return user_resumes
 
 @app.delete("/resume/", response_model=dict)
 async def delete_resume(
@@ -289,16 +298,16 @@ async def post_questions_route(
     answers = await format_and_predict("question_response", questions=extracted_questions, resume=latest_resume, info_text=relevant_info_texts)
     return answers
 
-@app.get("/users/{user_id}/infos/")
+@app.get("/users/infos/")
 async def get_user_infos(
     current_user: UserInDB = Depends(get_current_user)
 ):
     """API endpoint to get all information entries for a specific user."""
-    user_infos_df = info_store.table.search().where(f'user_id="{current_user.id}"').to_df()
+    user_infos_df = info_store.table.search().where(f'user_id="{current_user.id}"').limit(ALL_INFO_LIMIT).to_df()
     user_infos_df = user_infos_df.drop(columns=['vector'])
     return user_infos_df.to_dict('records')
 
-@app.delete("/info/{info_id}/")
+@app.delete("/info/")
 async def delete_info_route(
     info_id: str,
     current_user: UserInDB = Depends(get_current_user)

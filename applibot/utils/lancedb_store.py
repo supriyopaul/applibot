@@ -61,25 +61,40 @@ class LanceDBStore:
             for item in data:
                 self.table.add([item])
 
-if __name__ == "__main__":
-    table_name = 'info'
-    db_path='my-data/lancedb'
-    db_store = LanceDBStore(db_path=db_path, table_name=table_name, pydantic_model_str='InfoSchema')
-    db_store.export_to_json('exported_info.json')
+    def delete_user_info(self, user_id: int):
+        """Delete information associated with a user."""
+        delete_condition = f"user_id = '{user_id}'"
+        self.table.delete(delete_condition)
+        
+        print(f"Deleted information for user_id: {user_id}")
 
-    # Creating a backup store to import the data and verify
-    backup_table_name = table_name + '_backup'
-    db_store_backup = LanceDBStore(db_path, table_name=backup_table_name, pydantic_model_str='InfoSchema')
-    db_store_backup.import_from_json('exported_info.json')
-    
-    # Fetch the data from both tables and compare
-    original_data = db_store.table.to_pandas()
-    backup_data = db_store_backup.table.to_pandas()
-    
-    # Use DataFrame.equals for comparison to handle NaN values correctly
-    all_data_matched = original_data.equals(backup_data)
-    
-    if all_data_matched:
-        print("DB backed up successfully!")
+
+if __name__ == "__main__":
+    action = input("Choose an action: [1] Export to JSON, [2] Import from JSON and Verify: ")
+    table_name = 'info'
+
+    if action == '1':
+        db_path = input("Enter the database path (default: 'my-data/lancedb'): ")
+        db_path = db_path if db_path else 'my-data/lancedb'
+        db_store = LanceDBStore(db_path=db_path, table_name=table_name, pydantic_model_str='InfoSchema')
+        # Export to JSON
+        db_store.export_to_json('exported_info.json')
+        print("Data exported to JSON.")
+    elif action == '2':
+        backup_dir = input("Enter the backup directory path: ")
+        backup_table_name = table_name + '_backup'
+        db_store_backup = LanceDBStore(backup_dir, table_name=backup_table_name, pydantic_model_str='InfoSchema')
+        db_store_backup.import_from_json('exported_info.json')
+
+        # Assuming you need to compare with original data from the original path
+        db_store = LanceDBStore(db_path='my-data/lancedb', table_name=table_name, pydantic_model_str='InfoSchema')
+        original_data = db_store.table.to_pandas()
+        backup_data = db_store_backup.table.to_pandas()
+
+        all_data_matched = original_data.equals(backup_data)
+        if all_data_matched:
+            print("DB backed up successfully!")
+        else:
+            print("Backup failed to match original DB.")
     else:
-        print("Backup failed to match original DB.")
+        print("No valid action selected.")
