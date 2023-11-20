@@ -6,6 +6,10 @@ html {
     font-family: 'Arial', sans-serif;
 }
 
+@font-face {
+    font-family: 'Blox2';
+    src: url('blox/Blox2.ttf') format('truetype');
+}
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -16,8 +20,10 @@ html {
 
 .logo {
     width: auto;
-    max-width: 5%;
+    max-width: 10%;
     height: auto;
+    font-family: 'blox2', sans-serif;
+    font-size: 36px;
 }
 
 .nav-links {
