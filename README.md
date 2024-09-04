@@ -1,4 +1,4 @@
-![Apllibot Logo](https://github.com/supriyopaul/applibot/assets/33823698/7b4699fe-e749-44c2-bd69-47b7ad456beb)
+[![Watch the demo](https://img.youtube.com/vi/Xw15HAIryyo/hqdefault.jpg "Click to watch the video")](https://www.youtube.com/watch?v=Xw15HAIryyo)
 
 # **About "Applibot"**
 
