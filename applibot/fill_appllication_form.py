@@ -1,5 +1,6 @@
 import argparse
 import urllib3
+import os
 
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
@@ -26,8 +27,9 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 MODEL_NAME = "gpt-4"
 TEMPERATURE = 0.0
-llm = ChatOpenAI(model=MODEL_NAME, temperature=TEMPERATURE)
-embedding = OpenAIEmbeddings()
+dummy_api_key = os.getenv("OPENAI_API_KEY", "sk-dummy")
+llm = ChatOpenAI(model=MODEL_NAME, temperature=TEMPERATURE, openai_api_key=dummy_api_key)
+embedding = OpenAIEmbeddings(openai_api_key=dummy_api_key)
 
 def get_questions_in_form(application_form):
     form_to_question_template = PromptTemplate.from_template(FORM_TO_QUESTION_TEMPLATE)

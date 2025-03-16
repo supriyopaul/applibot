@@ -1,7 +1,6 @@
 import argparse
 import urllib3
 import os
-import sys
 
 import lancedb
 from langchain.chat_models import ChatOpenAI
@@ -14,8 +13,9 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 MODEL_NAME = "gpt-4"
 TEMPERATURE = 0.0
-llm = ChatOpenAI(model=MODEL_NAME, temperature=TEMPERATURE)
-embedding = OpenAIEmbeddings()
+dummy_api_key = os.getenv("OPENAI_API_KEY", "sk-dummy")
+llm = ChatOpenAI(model=MODEL_NAME, temperature=TEMPERATURE, openai_api_key=dummy_api_key)
+embedding = OpenAIEmbeddings(openai_api_key=dummy_api_key)
 DB_PATH = "data/lancedb"
 INFO_TABLE = "info"
 

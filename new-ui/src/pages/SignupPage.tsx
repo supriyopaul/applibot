@@ -11,7 +11,7 @@ const SignupPage: React.FC = () => {
   const { signup } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
@@ -25,7 +25,7 @@ const SignupPage: React.FC = () => {
       return;
     }
     
-    const success = signup(email, password, confirmPassword);
+    const success = await signup(email, password, confirmPassword);
     
     if (success) {
       navigate('/resume-management');

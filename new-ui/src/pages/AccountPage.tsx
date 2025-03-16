@@ -12,7 +12,7 @@ const AccountPage: React.FC = () => {
   const [credentialsSuccess, setCredentialsSuccess] = useState('');
   const [apiKeySuccess, setApiKeySuccess] = useState('');
 
-  const handleUpdateCredentials = (e: React.FormEvent) => {
+  const handleUpdateCredentials = async (e: React.FormEvent) => {
     e.preventDefault();
     setCredentialsError('');
     setCredentialsSuccess('');
@@ -27,7 +27,7 @@ const AccountPage: React.FC = () => {
       return;
     }
     
-    const success = updateCredentials(user?.email || '', currentPassword, newPassword);
+    const success = await updateCredentials(user?.email || '', currentPassword, newPassword);
     
     if (success) {
       setCredentialsSuccess('Credentials updated successfully');
@@ -39,11 +39,11 @@ const AccountPage: React.FC = () => {
     }
   };
 
-  const handleUpdateApiKey = (e: React.FormEvent) => {
+  const handleUpdateApiKey = async (e: React.FormEvent) => {
     e.preventDefault();
     setApiKeySuccess('');
     
-    const success = updateApiKey(apiKey);
+    const success = await updateApiKey(apiKey);
     
     if (success) {
       setApiKeySuccess('API key updated successfully');

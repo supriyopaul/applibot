@@ -10,7 +10,7 @@ const LoginPage: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
@@ -19,7 +19,7 @@ const LoginPage: React.FC = () => {
       return;
     }
     
-    const success = login(email, password);
+    const success = await login(email, password);
     
     if (success) {
       navigate('/resume-management');

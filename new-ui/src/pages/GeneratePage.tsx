@@ -24,22 +24,22 @@ const GeneratePage: React.FC = () => {
       setError('Please enter a job description');
       return;
     }
-    
     setIsGenerating(true);
     setError('');
-    
     try {
-      // In a real app, this would call the OpenAI API
-      // For demo purposes, we'll simulate a response
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      setSkillMatchOutput(
-        `Based on the job description, here's how your skills match:\n\n` +
-        `✅ Strong match: Communication skills, project management\n` +
-        `🟡 Moderate match: Technical expertise in required areas\n` +
-        `❌ Areas to improve: Specific industry experience\n\n` +
-        `Overall match score: 75%`
-      );
+      const response = await fetch('http://0.0.0.0:9000/skill-match/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'token': user?.token || '',
+        },
+        body: new URLSearchParams({
+          job_description: jobDescription,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to generate skill match');
+      const data = await response.json();
+      setSkillMatchOutput(data);
     } catch (err) {
       setError('Failed to generate skill match. Please try again.');
     } finally {
@@ -52,22 +52,22 @@ const GeneratePage: React.FC = () => {
       setError('Please enter a job description');
       return;
     }
-    
     setIsGenerating(true);
     setError('');
-    
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      setExpressionOutput(
-        `Dear Hiring Manager,\n\n` +
-        `I am writing to express my strong interest in the position advertised. ` +
-        `With my background in the required field and passion for innovation, ` +
-        `I believe I would be an excellent fit for your team.\n\n` +
-        `I look forward to discussing how my skills align with your needs.\n\n` +
-        `Sincerely,\n[Your Name]`
-      );
+      const response = await fetch('http://0.0.0.0:9000/eoi/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'token': user?.token || '',
+        },
+        body: new URLSearchParams({
+          job_description: jobDescription,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to generate expression of interest');
+      const data = await response.json();
+      setExpressionOutput(data);
     } catch (err) {
       setError('Failed to generate expression of interest. Please try again.');
     } finally {
@@ -80,27 +80,22 @@ const GeneratePage: React.FC = () => {
       setError('Please enter a job description');
       return;
     }
-    
     setIsGenerating(true);
     setError('');
-    
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      setCoverLetterOutput(
-        `Dear Hiring Team,\n\n` +
-        `I am excited to apply for the position at your company. ` +
-        `Throughout my career, I have developed the exact skills mentioned in your job posting, ` +
-        `including [specific skills from job description].\n\n` +
-        `In my previous role at [Previous Company], I successfully [relevant achievement]. ` +
-        `This experience has prepared me well for the challenges of this position.\n\n` +
-        `I am particularly drawn to your company because of [company value or project]. ` +
-        `I am confident that my background and enthusiasm make me an ideal candidate.\n\n` +
-        `Thank you for considering my application. I look forward to the opportunity to discuss ` +
-        `how I can contribute to your team's success.\n\n` +
-        `Sincerely,\n[Your Name]`
-      );
+      const response = await fetch('http://0.0.0.0:9000/cover-letter/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'token': user?.token || '',
+        },
+        body: new URLSearchParams({
+          job_description: jobDescription,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to generate cover letter');
+      const data = await response.json();
+      setCoverLetterOutput(data);
     } catch (err) {
       setError('Failed to generate cover letter. Please try again.');
     } finally {
@@ -113,24 +108,22 @@ const GeneratePage: React.FC = () => {
       setError('Please enter the form text');
       return;
     }
-    
     setIsGenerating(true);
     setError('');
-    
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      setFormFillOutput(
-        `[Name]: John Doe\n` +
-        `[Email]: john.doe@example.com\n` +
-        `[Phone]: (555) 123-4567\n` +
-        `[Address]: 123 Main Street, Anytown, ST 12345\n\n` +
-        `[Work Experience]: 5+ years in software development\n` +
-        `[Education]: Bachelor's in Computer Science\n` +
-        `[Skills]: JavaScript, React, Node.js, Python\n\n` +
-        `[Why do you want to work here?]: I'm passionate about your company's mission to innovate in the tech space, and I believe my skills in web development would be a valuable addition to your team.`
-      );
+      const response = await fetch('http://0.0.0.0:9000/fill-application-form/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'token': user?.token || '',
+        },
+        body: new URLSearchParams({
+          empty_form: formText,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to generate form fill');
+      const data = await response.json();
+      setFormFillOutput(data.filled_form || '');
     } catch (err) {
       setError('Failed to generate form fill. Please try again.');
     } finally {
@@ -143,24 +136,23 @@ const GeneratePage: React.FC = () => {
       setError('Please enter both the recruiter\'s DM and job description');
       return;
     }
-    
     setIsGenerating(true);
     setError('');
-    
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      setDmReplyOutput(
-        `Thank you for reaching out about the opportunity at [Company Name]!\n\n` +
-        `I'm very interested in the position and believe my background in [relevant skill] ` +
-        `aligns well with what you're looking for. I particularly appreciate the focus on ` +
-        `[aspect from job description].\n\n` +
-        `I'd love to discuss this opportunity further. Would you be available for a call ` +
-        `this week? I'm flexible and can work around your schedule.\n\n` +
-        `Looking forward to speaking with you!\n\n` +
-        `Best regards,\n[Your Name]`
-      );
+      const response = await fetch('http://0.0.0.0:9000/dm-reply/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'token': user?.token || '',
+        },
+        body: new URLSearchParams({
+          dm: recruiterDM,
+          job_description: dmJobDescription,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to generate DM reply');
+      const data = await response.json();
+      setDmReplyOutput(data);
     } catch (err) {
       setError('Failed to generate DM reply. Please try again.');
     } finally {
@@ -284,7 +276,7 @@ const GeneratePage: React.FC = () => {
                       </div>
                       <div className="relative">
                         <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 whitespace-pre-wrap h-64 overflow-y-auto">
-                          {skillMatchOutput}
+                          {JSON.stringify(skillMatchOutput, null, 2)}
                         </div>
                       </div>
                     </div>
@@ -350,7 +342,7 @@ const GeneratePage: React.FC = () => {
                       </div>
                       <div className="relative">
                         <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 whitespace-pre-wrap h-64 overflow-y-auto">
-                          {expressionOutput}
+                          {JSON.stringify(expressionOutput, null, 2)}
                         </div>
                       </div>
                     </div>
@@ -416,7 +408,7 @@ const GeneratePage: React.FC = () => {
                       </div>
                       <div className="relative">
                         <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 whitespace-pre-wrap h-64 overflow-y-auto">
-                          {coverLetterOutput}
+                          {JSON.stringify(coverLetterOutput, null, 2)}
                         </div>
                       </div>
                     </div>
@@ -562,7 +554,7 @@ const GeneratePage: React.FC = () => {
                       </div>
                       <div className="relative">
                         <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 whitespace-pre-wrap h-64 overflow-y-auto">
-                          {dmReplyOutput}
+                          {JSON.stringify(dmReplyOutput, null, 2)}
                         </div>
                       </div>
                     </div>

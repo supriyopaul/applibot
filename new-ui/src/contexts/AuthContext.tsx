@@ -10,6 +10,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
+  // On mount, load user from localStorage (including token if available)
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -17,40 +18,47 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, []);
 
-  const login = (email: string, password: string) => {
-    // In a real app, you would validate against a backend
-    const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
-    const foundUser = storedUsers.find(
-      (u: User) => u.email === email && u.password === password
-    );
-
-    if (foundUser) {
-      setUser(foundUser);
-      localStorage.setItem('user', JSON.stringify(foundUser));
+  const login = async (email: string, password: string) => {
+    try {
+      const response = await fetch('http://0.0.0.0:9000/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          username: email,
+          password: password,
+        }),
+      });
+      if (!response.ok) throw new Error('Login failed');
+      const data = await response.json();
+      const newUser = { email, token: data.access_token, apiKey: null, password };
+      setUser(newUser);
+      localStorage.setItem('user', JSON.stringify(newUser));
       return true;
+    } catch (err) {
+      return false;
     }
-    return false;
   };
 
-  const signup = (email: string, password: string, confirmPassword: string) => {
+  const signup = async (email: string, password: string, confirmPassword: string) => {
     if (password !== confirmPassword) {
       return false;
     }
-
-    const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
-    const userExists = storedUsers.some((u: User) => u.email === email);
-
-    if (userExists) {
+    try {
+      const response = await fetch('http://0.0.0.0:9000/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!response.ok) throw new Error('Signup failed');
+      // After signup, log in the user
+      return await login(email, password);
+    } catch (err) {
       return false;
     }
-
-    const newUser = { email, password };
-    const updatedUsers = [...storedUsers, newUser];
-    
-    localStorage.setItem('users', JSON.stringify(updatedUsers));
-    setUser(newUser);
-    localStorage.setItem('user', JSON.stringify(newUser));
-    return true;
   };
 
   const logout = () => {
@@ -58,41 +66,51 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('user');
   };
 
-  const updateCredentials = (email: string, password: string, newPassword: string) => {
-    if (!user) return false;
-
-    const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
-    const userIndex = storedUsers.findIndex(
-      (u: User) => u.email === user.email && u.password === password
-    );
-
-    if (userIndex === -1) return false;
-
-    const updatedUser = { ...storedUsers[userIndex], email, password: newPassword };
-    storedUsers[userIndex] = updatedUser;
-    
-    localStorage.setItem('users', JSON.stringify(storedUsers));
-    setUser(updatedUser);
-    localStorage.setItem('user', JSON.stringify(updatedUser));
-    return true;
+  const updateCredentials = async (email: string, currentPassword: string, newPassword: string) => {
+    if (!user || !user.token) return false;
+    try {
+      const response = await fetch('http://0.0.0.0:9000/update_credentials', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'token': user.token,
+        },
+        body: new URLSearchParams({
+          current_password: currentPassword,
+          new_password: newPassword,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to update credentials');
+      const updatedUser = { ...user, password: newPassword };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return true;
+    } catch (err) {
+      return false;
+    }
   };
 
-  const updateApiKey = (apiKey: string) => {
-    if (!user) return false;
-
-    const updatedUser = { ...user, apiKey };
-    
-    const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
-    const userIndex = storedUsers.findIndex((u: User) => u.email === user.email);
-    
-    if (userIndex !== -1) {
-      storedUsers[userIndex] = updatedUser;
-      localStorage.setItem('users', JSON.stringify(storedUsers));
+  const updateApiKey = async (apiKey: string) => {
+    if (!user || !user.token) return false;
+    try {
+      const response = await fetch('http://0.0.0.0:9000/update_openai_key', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'token': user.token,
+        },
+        body: new URLSearchParams({
+          new_openai_key: apiKey,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to update API key');
+      const updatedUser = { ...user, apiKey };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return true;
+    } catch (err) {
+      return false;
     }
-    
-    setUser(updatedUser);
-    localStorage.setItem('user', JSON.stringify(updatedUser));
-    return true;
   };
 
   return (

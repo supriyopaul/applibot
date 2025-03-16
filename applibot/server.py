@@ -24,6 +24,7 @@ from applibot.templates import (QUESTION_EXTRACTION_TEMPLATE, QUESTION_RESPONSE_
                                 ANALYSIS_TEMPLATE)
 from applibot.utils.postgres_store import UserInDB, Resume
 from applibot.utils.config_loader import load_config
+from applibot.fill_appllication_form import answer_form as fill_form
 
 
 app = FastAPI()
@@ -81,19 +82,15 @@ class ResumeResponse(BaseModel):
 
 # Utility functions
 def verify_password(plain_password, hashed_password):
-    """Verify a plaintext password against the hashed version."""
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password):
-    """Generate a hash for a plaintext password."""
     return pwd_context.hash(password)
 
 def get_user(db, email: str):
-    """Retrieve a user object by email from the database."""
     return db.query(UserInDB).filter(UserInDB.email == email).first()
 
 def create_user(db, user: User):
-    """Create a new user with a hashed password and save to the database."""
     fake_hashed_password = get_password_hash(user.password)
     db_user = UserInDB(email=user.email, hashed_password=fake_hashed_password)
     db.add(db_user)
@@ -102,7 +99,6 @@ def create_user(db, user: User):
     return db_user
 
 def authenticate_user(db, email: str, password: str):
-    """Authenticate a user by email and password."""
     user = get_user(db, email)
     if not user:
         return False
@@ -111,7 +107,6 @@ def authenticate_user(db, email: str, password: str):
     return user
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
-    """Create a JWT token that includes the specified data with an optional expiry."""
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -122,7 +117,6 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 async def format_and_predict(template_name, llm_instance=None, **kwargs):
-    """Format a prompt using a template and generate a prediction using the provided llm_instance (or global llm if not provided)."""
     if llm_instance is None:
         llm_instance = llm
     prompt = templates[template_name].format(**kwargs)
@@ -134,11 +128,9 @@ async def format_and_predict(template_name, llm_instance=None, **kwargs):
     return extract_output_block(prediction)
 
 def compute_distance(query_vector, v):
-    """Compute the Euclidean distance between two vectors."""
     return np.linalg.norm(np.array(v) - query_vector)
 
 async def get_relevant_info_texts(text, user_id):
-    """Retrieve texts most relevant to a given query from the information stored by a specific user."""
     query_vector = embedding.embed_query(text)
     user_info = info_store.table.to_pandas()[info_store.table.to_pandas()['user_id'] == f'{user_id}']
     distance_func = functools.partial(compute_distance, query_vector)
@@ -147,7 +139,6 @@ async def get_relevant_info_texts(text, user_id):
     return '\n'.join(relevant_info_df['text'].tolist())
 
 async def fetch_latest_resume(db: Session, user_id: int):
-    """Fetch the latest resume content for a given user from the database."""
     latest_resume = db.query(Resume) \
                       .filter(Resume.user_id == user_id) \
                       .order_by(Resume.created_at.desc()) \
@@ -156,7 +147,6 @@ async def fetch_latest_resume(db: Session, user_id: int):
 
 # Dependency
 def get_current_user(db: Session = Depends(db_store.get_db), token: str = Header(...)):
-    """Get the current user by decoding and validating the JWT token."""
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -175,7 +165,6 @@ def get_current_user(db: Session = Depends(db_store.get_db), token: str = Header
         raise credentials_exception
     return user
 
-# Helper function for formatting info with the user's llm instance
 async def format_info_helper(unformatted_info_text: str, user_llm):
     return await format_and_predict("info_formatting", llm_instance=user_llm, unformatted_info=unformatted_info_text)
 
@@ -184,7 +173,6 @@ async def format_info_helper(unformatted_info_text: str, user_llm):
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(db_store.get_db)):
-    """API endpoint to authenticate a user and return a JWT access token."""
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
@@ -203,7 +191,6 @@ async def sign_up(
     user: User,
     db: Session = Depends(db_store.get_db)
 ):
-    """API endpoint to create a new user account."""
     db_user = get_user(db, email=user.email)
     if db_user:
         raise HTTPException(
@@ -215,7 +202,6 @@ async def sign_up(
 
 @app.post("/update_openai_key")
 async def update_openai_key(new_openai_key: str = Form(...), current_user: UserInDB = Depends(get_current_user), db: Session = Depends(db_store.get_db)):
-    """API endpoint to update the user's OpenAI API key."""
     if not new_openai_key.strip():
         raise HTTPException(status_code=400, detail="API key cannot be empty")
     current_user.openai_api_key = new_openai_key.strip()
@@ -229,7 +215,6 @@ async def upload_resume(
     current_user: UserInDB = Depends(get_current_user),
     db: Session = Depends(db_store.get_db)
 ):
-    """API endpoint to upload a new resume for the current user."""
     db_resume = Resume(user_id=current_user.id, content=resume_content)
     db.add(db_resume)
     db.commit()
@@ -241,7 +226,6 @@ async def get_latest_resume(
     current_user: UserInDB = Depends(get_current_user),
     db: Session = Depends(db_store.get_db)
 ):
-    """API endpoint to retrieve the latest uploaded resume of the current user."""
     latest_resume = db.query(Resume)\
                       .filter(Resume.user_id == current_user.id)\
                       .order_by(Resume.created_at.desc())\
@@ -255,7 +239,6 @@ async def get_resumes_for_user(
     current_user: UserInDB = Depends(get_current_user),
     db: Session = Depends(db_store.get_db)
 ):
-    """API endpoint to retrieve all resumes for a specific user, if authorized."""
     user_resumes = db.query(Resume).filter(Resume.user_id == current_user.id).all()
     return user_resumes
 
@@ -265,7 +248,6 @@ async def delete_resume(
     current_user: UserInDB = Depends(get_current_user),
     db: Session = Depends(db_store.get_db)
 ):
-    """API endpoint to delete a specific resume of the current user, if authorized."""
     db_resume = db.query(Resume).filter(Resume.id == resume_id).first()
     if db_resume is None:
         raise HTTPException(status_code=404, detail="Resume not found")
@@ -280,7 +262,6 @@ async def post_info(
     info_text: str = Form(...),
     current_user: UserInDB = Depends(get_current_user)
 ):
-    """API endpoint to post new information and save after formatting and vectorization."""
     info_id = compute_sha256(info_text)
     if not info_store.table.search().where(f'user_id="{current_user.id}" AND id="{info_id}"').to_df().empty:
         raise HTTPException(
@@ -301,7 +282,6 @@ async def post_info(
 
 @app.post("/format-info/")
 async def format_info_endpoint(unformatted_info_text: str = Form(...), current_user: UserInDB = Depends(get_current_user)):
-    """API endpoint to format provided information according to predefined templates."""
     if not current_user.openai_api_key:
          raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
     user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
@@ -313,7 +293,6 @@ async def post_questions_route(
     current_user: UserInDB = Depends(get_current_user),
     db: Session = Depends(db_store.get_db)
 ):
-    """API endpoint to process and answer questions based on the user's resume and stored information."""
     if not current_user.openai_api_key:
          raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
     user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
@@ -327,7 +306,6 @@ async def post_questions_route(
 async def get_user_infos(
     current_user: UserInDB = Depends(get_current_user)
 ):
-    """API endpoint to get all information entries for a specific user."""
     user_infos_df = info_store.table.search().where(f'user_id="{current_user.id}"').limit(ALL_INFO_LIMIT).to_df()
     user_infos_df = user_infos_df.drop(columns=['vector'])
     return user_infos_df.to_dict('records')
@@ -337,7 +315,6 @@ async def delete_info_route(
     info_id: str,
     current_user: UserInDB = Depends(get_current_user)
 ):
-    """API endpoint to delete a specific information entry for the current user."""
     info_store.table.delete(f'id = "{info_id}" AND user_id="{current_user.id}"')
     return {"status": "Info deleted successfully"}
 
@@ -347,7 +324,6 @@ async def generate_cover_letter_route(
     current_user: UserInDB = Depends(get_current_user),
     db: Session = Depends(db_store.get_db)
 ):
-    """API endpoint to generate a personalized cover letter based on the user's resume and job description."""
     if not current_user.openai_api_key:
          raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
     user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
@@ -367,7 +343,6 @@ async def dm_reply_route(
     current_user: UserInDB = Depends(get_current_user),
     db: Session = Depends(db_store.get_db)
 ):
-    """API endpoint to generate a reply for a direct message based on the user's resume and additional context."""
     if not current_user.openai_api_key:
          raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
     user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
@@ -386,7 +361,6 @@ async def generate_eoi_route(
     current_user: UserInDB = Depends(get_current_user),
     db: Session = Depends(db_store.get_db)
 ):
-    """Route to generate an Expression of Interest letter based on company/field details."""
     if not current_user.openai_api_key:
          raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
     user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
@@ -405,7 +379,6 @@ async def skill_match(
     current_user: UserInDB = Depends(get_current_user),
     db: Session = Depends(db_store.get_db)
 ):
-    """API endpoint to generate a skill match report based on the user's resume and job description."""
     if not current_user.openai_api_key:
          raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
     user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
@@ -424,13 +397,18 @@ async def update_credentials(
     current_user: UserInDB = Depends(get_current_user),
     db: Session = Depends(db_store.get_db)
 ):
-    """API endpoint to update the user's credentials (password)."""
     if not verify_password(current_password, current_user.hashed_password):
         raise HTTPException(status_code=400, detail="Current password is incorrect")
     current_user.hashed_password = get_password_hash(new_password)
     db.add(current_user)
     db.commit()
     return {"message": "Password updated successfully"}
+
+# New endpoint: Fill Application Form
+@app.post("/fill-application-form/")
+async def fill_application_form_endpoint(empty_form: str = Form(...), current_user: UserInDB = Depends(get_current_user)):
+    filled_form = fill_form(empty_form)
+    return {"filled_form": filled_form}
 
 def main():
     import uvicorn
