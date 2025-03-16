@@ -1,5 +1,5 @@
 // Define the base URL for your backend API
-const apiBaseUrl = 'http://localhost:9999';
+const apiBaseUrl = 'http://localhost:9000';
 
 document.addEventListener('DOMContentLoaded', () => {
     handleNavigationRestrictions();

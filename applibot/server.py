@@ -17,8 +17,9 @@ from applibot.utils.misc import (compute_sha256, extract_output_block,
                                  print_red, print_yellow)
 from applibot.templates import (QUESTION_EXTRACTION_TEMPLATE, QUESTION_RESPONSE_TEMPLATE,
                                 COVER_LETTER_TEMPLATE, COVER_LETTER_FILL_TEMPLATE,
-                                DM_REPLY_TEMPLATE, EXPRESSION_OF_INTEREST_TEMPLATE,
-                                EOI_FILL_TEMPLATE, INFO_FORMATTING_TEMPLATE, DM_REPLY_FILL_TEMPLATE,
+                                DM_REPLY_TEMPLATE, DM_REPLY_FILL_TEMPLATE,
+                                EXPRESSION_OF_INTEREST_TEMPLATE, EOI_FILL_TEMPLATE,
+                                INFO_FORMATTING_TEMPLATE, DM_REPLY_FILL_TEMPLATE,
                                 ANALYSIS_TEMPLATE)
 from applibot.utils.postgres_store import UserInDB, Resume
 from applibot.utils.config_loader import load_config
@@ -380,6 +381,20 @@ async def skill_match(
                                         info_text=relevant_info_texts)
     return analysis
 
+@app.post("/update_credentials")
+async def update_credentials(
+    current_password: str = Form(...),
+    new_password: str = Form(...),
+    current_user: UserInDB = Depends(get_current_user),
+    db: Session = Depends(db_store.get_db)
+):
+    """API endpoint to update the user's credentials (password)."""
+    if not verify_password(current_password, current_user.hashed_password):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    current_user.hashed_password = get_password_hash(new_password)
+    db.add(current_user)
+    db.commit()
+    return {"message": "Password updated successfully"}
 
 def main():
     import uvicorn
