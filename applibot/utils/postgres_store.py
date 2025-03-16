@@ -22,7 +22,7 @@ class PostgresStore:
         Base.metadata.create_all(bind=self.engine)
 
     def _create_db(self):
-                # Check if the database exists
+        # Check if the database exists
         if not database_exists(self.database_url):
             print("Database does not exist, creating...")
             create_database(self.database_url)
@@ -85,6 +85,7 @@ class UserInDB(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
+    openai_api_key = Column(String, nullable=True)
 
 class Resume(Base):
     __tablename__ = RESUME_TABLE_NAME

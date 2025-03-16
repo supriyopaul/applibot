@@ -12,6 +12,7 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from langchain.prompts import PromptTemplate
+from langchain.chat_models import ChatOpenAI
 from applibot.utils.misc import (compute_sha256, extract_output_block,
                                  print_green, print_orange, print_purple,
                                  print_red, print_yellow)
@@ -120,14 +121,17 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     encoded_jwt = jwt.encode(to_encode, config.raw.service.secret_key, algorithm=config.raw.service.hash_algorithm)
     return encoded_jwt
 
-async def format_and_predict(template_name, **kwargs):
-        prompt = templates[template_name].format(**kwargs)
-        print_orange(f"Formatted Prompt for {template_name.upper()}:\n")
-        print_purple(prompt)
-        prediction = llm.predict(prompt)
-        print_orange(f"LLM Prediction for {template_name.upper()}:\n")
-        print_green(prediction)
-        return extract_output_block(prediction)
+async def format_and_predict(template_name, llm_instance=None, **kwargs):
+    """Format a prompt using a template and generate a prediction using the provided llm_instance (or global llm if not provided)."""
+    if llm_instance is None:
+        llm_instance = llm
+    prompt = templates[template_name].format(**kwargs)
+    print_orange(f"Formatted Prompt for {template_name.upper()}:\n")
+    print_purple(prompt)
+    prediction = llm_instance.predict(prompt)
+    print_orange(f"LLM Prediction for {template_name.upper()}:\n")
+    print_green(prediction)
+    return extract_output_block(prediction)
 
 def compute_distance(query_vector, v):
     """Compute the Euclidean distance between two vectors."""
@@ -171,6 +175,10 @@ def get_current_user(db: Session = Depends(db_store.get_db), token: str = Header
         raise credentials_exception
     return user
 
+# Helper function for formatting info with the user's llm instance
+async def format_info_helper(unformatted_info_text: str, user_llm):
+    return await format_and_predict("info_formatting", llm_instance=user_llm, unformatted_info=unformatted_info_text)
+
 # API endpoints
 @app.post("/token", response_model=Token)
 async def login_for_access_token(
@@ -204,6 +212,16 @@ async def sign_up(
         )
     create_user(db, user)
     return user
+
+@app.post("/update_openai_key")
+async def update_openai_key(new_openai_key: str = Form(...), current_user: UserInDB = Depends(get_current_user), db: Session = Depends(db_store.get_db)):
+    """API endpoint to update the user's OpenAI API key."""
+    if not new_openai_key.strip():
+        raise HTTPException(status_code=400, detail="API key cannot be empty")
+    current_user.openai_api_key = new_openai_key.strip()
+    db.add(current_user)
+    db.commit()
+    return {"message": "OpenAI API key updated successfully"}
 
 @app.post("/resume/", response_model=ResumeResponse)
 async def upload_resume(
@@ -269,7 +287,7 @@ async def post_info(
             status_code=400,
             detail=f"Record with id {info_id} and user_id {current_user.id} already exists in the table."
         )
-    formatted_info_text = await format_info(unformatted_info_text=info_text)
+    formatted_info_text = await format_and_predict("info_formatting", unformatted_info=info_text)
     data = {
         "text": formatted_info_text,
         "id": info_id,
@@ -282,9 +300,12 @@ async def post_info(
     return data
 
 @app.post("/format-info/")
-async def format_info(unformatted_info_text: str = Form(...)):
-        """API endpoint to format provided information according to predefined templates."""
-        return await format_and_predict("info_formatting", unformatted_info=unformatted_info_text)
+async def format_info_endpoint(unformatted_info_text: str = Form(...), current_user: UserInDB = Depends(get_current_user)):
+    """API endpoint to format provided information according to predefined templates."""
+    if not current_user.openai_api_key:
+         raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
+    user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
+    return await format_info_helper(unformatted_info_text, user_llm)
 
 @app.post("/questions/")
 async def post_questions_route(
@@ -293,10 +314,13 @@ async def post_questions_route(
     db: Session = Depends(db_store.get_db)
 ):
     """API endpoint to process and answer questions based on the user's resume and stored information."""
+    if not current_user.openai_api_key:
+         raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
+    user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
     latest_resume = await fetch_latest_resume(db, current_user.id)
-    extracted_questions = await format_info(unformatted_info_text=question)
+    extracted_questions = await format_info_helper(question, user_llm)
     relevant_info_texts = await get_relevant_info_texts(extracted_questions, user_id=current_user.id)
-    answers = await format_and_predict("question_response", questions=extracted_questions, resume=latest_resume, info_text=relevant_info_texts)
+    answers = await format_and_predict("question_response", llm_instance=user_llm, questions=extracted_questions, resume=latest_resume, info_text=relevant_info_texts)
     return answers
 
 @app.get("/users/infos/")
@@ -324,10 +348,13 @@ async def generate_cover_letter_route(
     db: Session = Depends(db_store.get_db)
 ):
     """API endpoint to generate a personalized cover letter based on the user's resume and job description."""
+    if not current_user.openai_api_key:
+         raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
+    user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
     latest_resume = await fetch_latest_resume(db, current_user.id)
-    cover_letter_template = await format_and_predict("cover_letter", job_description=job_description)
+    cover_letter_template = await format_and_predict("cover_letter", llm_instance=user_llm, job_description=job_description)
     relevant_info_texts = await get_relevant_info_texts(cover_letter_template, user_id=current_user.id)
-    cover_letter = await format_and_predict("cover_letter_fill",
+    cover_letter = await format_and_predict("cover_letter_fill", llm_instance=user_llm,
                                             cover_template=cover_letter_template,
                                             resume=latest_resume,
                                             info_text=relevant_info_texts)
@@ -341,10 +368,13 @@ async def dm_reply_route(
     db: Session = Depends(db_store.get_db)
 ):
     """API endpoint to generate a reply for a direct message based on the user's resume and additional context."""
+    if not current_user.openai_api_key:
+         raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
+    user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
     latest_resume = await fetch_latest_resume(db, current_user.id)
-    dm_response_template = await format_and_predict("dm_reply", dm=dm)
+    dm_response_template = await format_and_predict("dm_reply", llm_instance=user_llm, dm=dm)
     relevant_info_texts = await get_relevant_info_texts(dm_response_template, user_id=current_user.id)
-    dm_response = await format_and_predict("dm_reply_fill",
+    dm_response = await format_and_predict("dm_reply_fill", llm_instance=user_llm,
                                            dm_reply_template=dm_response_template,
                                            resume=latest_resume,
                                            info_text=relevant_info_texts)
@@ -357,10 +387,13 @@ async def generate_eoi_route(
     db: Session = Depends(db_store.get_db)
 ):
     """Route to generate an Expression of Interest letter based on company/field details."""
+    if not current_user.openai_api_key:
+         raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
+    user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
     latest_resume = await fetch_latest_resume(db, current_user.id)
-    eoi_template = await format_and_predict("expression_of_interest", job_description=job_description)
+    eoi_template = await format_and_predict("expression_of_interest", llm_instance=user_llm, job_description=job_description)
     relevant_info_texts = await get_relevant_info_texts(eoi_template, user_id=current_user.id)
-    eoi = await format_and_predict("eoi_fill",
+    eoi = await format_and_predict("eoi_fill", llm_instance=user_llm,
                                    eoi_template=eoi_template,
                                    resume=latest_resume,
                                    info_text=relevant_info_texts)
@@ -373,9 +406,12 @@ async def skill_match(
     db: Session = Depends(db_store.get_db)
 ):
     """API endpoint to generate a skill match report based on the user's resume and job description."""
+    if not current_user.openai_api_key:
+         raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
+    user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
     latest_resume = await fetch_latest_resume(db, current_user.id)
     relevant_info_texts = await get_relevant_info_texts(job_description, user_id=current_user.id)
-    analysis = await format_and_predict("analysis",
+    analysis = await format_and_predict("analysis", llm_instance=user_llm,
                                         job_description=job_description,
                                         resume=latest_resume,
                                         info_text=relevant_info_texts)
