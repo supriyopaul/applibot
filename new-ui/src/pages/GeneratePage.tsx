@@ -111,14 +111,14 @@ const GeneratePage: React.FC = () => {
     setIsGenerating(true);
     setError('');
     try {
-      const response = await fetch('http://0.0.0.0:9000/fill-application-form/', {
+      const response = await fetch('http://0.0.0.0:9000/questions/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'token': user?.token || '',
         },
         body: new URLSearchParams({
-          empty_form: formText,
+          question: formText,
         }),
       });
       if (!response.ok) throw new Error('Failed to generate form fill');
@@ -201,19 +201,24 @@ const GeneratePage: React.FC = () => {
             
             <Tabs className="mb-4">
               <TabList className="flex border-b border-gray-200 mb-6 overflow-x-auto">
-                <Tab className="px-6 py-2 font-medium text-gray-600 hover:text-indigo-600 cursor-pointer border-b-2 border-transparent hover:border-indigo-600 transition-colors whitespace-nowrap">
+                <Tab className="px-6 py-2 font-medium text-gray-600 cursor-pointer border-b-2 border-transparent transition-colors whitespace-nowrap"
+                     selectedClassName="border-b-2 border-indigo-600 text-indigo-600">
                   Skill Match
                 </Tab>
-                <Tab className="px-6 py-2 font-medium text-gray-600 hover:text-indigo-600 cursor-pointer border-b-2 border-transparent hover:border-indigo-600 transition-colors whitespace-nowrap">
+                <Tab className="px-6 py-2 font-medium text-gray-600 cursor-pointer border-b-2 border-transparent transition-colors whitespace-nowrap"
+                     selectedClassName="border-b-2 border-indigo-600 text-indigo-600">
                   Expression of Interest
                 </Tab>
-                <Tab className="px-6 py-2 font-medium text-gray-600 hover:text-indigo-600 cursor-pointer border-b-2 border-transparent hover:border-indigo-600 transition-colors whitespace-nowrap">
+                <Tab className="px-6 py-2 font-medium text-gray-600 cursor-pointer border-b-2 border-transparent transition-colors whitespace-nowrap"
+                     selectedClassName="border-b-2 border-indigo-600 text-indigo-600">
                   Cover Letter
                 </Tab>
-                <Tab className="px-6 py-2 font-medium text-gray-600 hover:text-indigo-600 cursor-pointer border-b-2 border-transparent hover:border-indigo-600 transition-colors whitespace-nowrap">
+                <Tab className="px-6 py-2 font-medium text-gray-600 cursor-pointer border-b-2 border-transparent transition-colors whitespace-nowrap"
+                     selectedClassName="border-b-2 border-indigo-600 text-indigo-600">
                   Form Fill-up
                 </Tab>
-                <Tab className="px-6 py-2 font-medium text-gray-600 hover:text-indigo-600 cursor-pointer border-b-2 border-transparent hover:border-indigo-600 transition-colors whitespace-nowrap">
+                <Tab className="px-6 py-2 font-medium text-gray-600 cursor-pointer border-b-2 border-transparent transition-colors whitespace-nowrap"
+                     selectedClassName="border-b-2 border-indigo-600 text-indigo-600">
                   DM Reply
                 </Tab>
               </TabList>
@@ -276,7 +281,7 @@ const GeneratePage: React.FC = () => {
                       </div>
                       <div className="relative">
                         <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 whitespace-pre-wrap h-64 overflow-y-auto">
-                          {JSON.stringify(skillMatchOutput, null, 2)}
+                          {skillMatchOutput}
                         </div>
                       </div>
                     </div>
@@ -342,7 +347,7 @@ const GeneratePage: React.FC = () => {
                       </div>
                       <div className="relative">
                         <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 whitespace-pre-wrap h-64 overflow-y-auto">
-                          {JSON.stringify(expressionOutput, null, 2)}
+                          {expressionOutput}
                         </div>
                       </div>
                     </div>
@@ -408,7 +413,7 @@ const GeneratePage: React.FC = () => {
                       </div>
                       <div className="relative">
                         <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 whitespace-pre-wrap h-64 overflow-y-auto">
-                          {JSON.stringify(coverLetterOutput, null, 2)}
+                          {coverLetterOutput}
                         </div>
                       </div>
                     </div>
@@ -554,7 +559,7 @@ const GeneratePage: React.FC = () => {
                       </div>
                       <div className="relative">
                         <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 whitespace-pre-wrap h-64 overflow-y-auto">
-                          {JSON.stringify(dmReplyOutput, null, 2)}
+                          {dmReplyOutput}
                         </div>
                       </div>
                     </div>
