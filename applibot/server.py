@@ -200,7 +200,7 @@ async def sign_up(
     create_user(db, user)
     return user
 
-@app.post("/update_openai_key")
+@app.post("/update_openai_key/")
 async def update_openai_key(new_openai_key: str = Form(...), current_user: UserInDB = Depends(get_current_user), db: Session = Depends(db_store.get_db)):
     if not new_openai_key.strip():
         raise HTTPException(status_code=400, detail="API key cannot be empty")
@@ -298,9 +298,12 @@ async def post_questions_route(
     user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
     latest_resume = await fetch_latest_resume(db, current_user.id)
     extracted_questions = await format_info_helper(question, user_llm)
+    # Check if questions were successfully extracted
+    if not extracted_questions.strip() or "no questions provided" in extracted_questions.lower():
+         raise HTTPException(status_code=400, detail="No questions found in the provided input. Please include questions between '=====Questions start=====' and '=====Questions end====='.")
     relevant_info_texts = await get_relevant_info_texts(extracted_questions, user_id=current_user.id)
     answers = await format_and_predict("question_response", llm_instance=user_llm, questions=extracted_questions, resume=latest_resume, info_text=relevant_info_texts)
-    return answers
+    return {"filled_form": answers}
 
 @app.get("/users/infos/")
 async def get_user_infos(
@@ -404,11 +407,6 @@ async def update_credentials(
     db.commit()
     return {"message": "Password updated successfully"}
 
-# New endpoint: Fill Application Form
-@app.post("/fill-application-form/")
-async def fill_application_form_endpoint(empty_form: str = Form(...), current_user: UserInDB = Depends(get_current_user)):
-    filled_form = fill_form(empty_form)
-    return {"filled_form": filled_form}
 
 def main():
     import uvicorn
