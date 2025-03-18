@@ -213,6 +213,13 @@ async def update_openai_key(new_openai_key: str = Form(...), current_user: UserI
 async def get_openai_key(current_user: UserInDB = Depends(get_current_user)):
     return {"openai_api_key": current_user.openai_api_key}
 
+@app.delete("/delete_openai_key/")
+async def delete_openai_key(current_user: UserInDB = Depends(get_current_user), db: Session = Depends(db_store.get_db)):
+    current_user.openai_api_key = None
+    db.add(current_user)
+    db.commit()
+    return {"message": "OpenAI API key deleted successfully"}
+
 @app.post("/resume/", response_model=ResumeResponse)
 async def upload_resume(
     resume_content: str = Form(...),

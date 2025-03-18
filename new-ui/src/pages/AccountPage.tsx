@@ -11,6 +11,7 @@ const AccountPage: React.FC = () => {
   const [credentialsError, setCredentialsError] = useState('');
   const [credentialsSuccess, setCredentialsSuccess] = useState('');
   const [apiKeySuccess, setApiKeySuccess] = useState('');
+  const [showApiKey, setShowApiKey] = useState(false);
 
   const handleUpdateCredentials = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +48,32 @@ const AccountPage: React.FC = () => {
     
     if (success) {
       setApiKeySuccess('API key updated successfully');
+    }
+  };
+
+  const handleDeleteApiKey = async () => {
+    if (window.confirm("Are you sure you want to permanently delete your API key?")) {
+      try {
+        const response = await fetch('http://0.0.0.0:9000/delete_openai_key/', {
+          method: 'DELETE',
+          headers: {
+            'token': user?.token || '',
+          },
+        });
+        if (response.ok) {
+          setApiKey('');
+          setApiKeySuccess('API key deleted successfully');
+          // Optionally update local storage and refresh the page or user state.
+          const updatedUser = { ...user, apiKey: null };
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          setShowApiKey(false);
+        } else {
+          alert("Failed to delete API key");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error deleting API key");
+      }
     }
   };
 
@@ -153,24 +180,13 @@ const AccountPage: React.FC = () => {
                 </div>
               )}
               
-              <div className="mb-4">
-                <p className="text-gray-600 mb-4">
-                  To use the advanced features of Applibot, you need to provide your OpenAI API key with GPT-4 access.
-                </p>
-                <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
-                  <p className="text-yellow-700">
-                    <strong>Note:</strong> Your API key is stored securely in your browser's local storage. We never send your API key to our servers.
-                  </p>
-                </div>
-              </div>
-              
               <form onSubmit={handleUpdateApiKey} className="space-y-4">
                 <div>
                   <label htmlFor="api-key" className="block text-sm font-medium text-gray-700 mb-1">
                     OpenAI API Key
                   </label>
                   <input
-                    type="password"
+                    type={showApiKey ? "text" : "password"}
                     id="api-key"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                     placeholder="sk-..."
@@ -179,12 +195,26 @@ const AccountPage: React.FC = () => {
                   />
                 </div>
                 
-                <div className="flex justify-end">
+                <div className="flex justify-end space-x-4">
                   <button
                     type="submit"
                     className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
                     Save API Key
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowApiKey(!showApiKey)}
+                    className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                  >
+                    {showApiKey ? 'Hide API Key' : 'Show API Key'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDeleteApiKey}
+                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                  >
+                    Delete API Key
                   </button>
                 </div>
               </form>
