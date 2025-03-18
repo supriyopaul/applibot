@@ -2,11 +2,24 @@ import React, { useState } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { useData } from '../contexts/DataContext';
 import { Trash2 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import 'react-tabs/style/react-tabs.css';
 
 const ResumeManagementPage: React.FC = () => {
-  const [resumeContent, setResumeContent] = useState('');
+  const { user } = useAuth();
   const { resumes, addResume, deleteResume } = useData();
+  const [resumeContent, setResumeContent] = useState('');
+
+  // Block access if API key is not set
+  if (!user?.apiKey) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <p className="text-xl text-red-500">
+          Please update your OpenAI API key in the Account page to access Resume Management.
+        </p>
+      </div>
+    );
+  }
 
   const handleSaveResume = () => {
     if (resumeContent.trim()) {

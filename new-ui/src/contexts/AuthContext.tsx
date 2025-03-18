@@ -18,6 +18,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, []);
 
+  useEffect(() => {
+    const fetchApiKey = async () => {
+      if (user && !user.apiKey) {
+        try {
+          const response = await fetch('http://0.0.0.0:9000/get_openai_key/', {
+            headers: {
+              'token': user.token,
+            },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            const updatedUser = { ...user, apiKey: data.openai_api_key };
+            setUser(updatedUser);
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+          }
+        } catch (err) {
+          console.error("Error fetching API key:", err);
+        }
+      }
+    };
+    fetchApiKey();
+  }, [user]);
+
   const login = async (email: string, password: string) => {
     try {
       const response = await fetch('http://0.0.0.0:9000/token', {

@@ -19,6 +19,17 @@ const GeneratePage: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState('');
 
+  // Block access if API key is not set
+  if (!user?.apiKey) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <p className="text-xl text-red-500">
+          Please update your OpenAI API key in the Account page to access Generation features.
+        </p>
+      </div>
+    );
+  }
+
   const generateSkillMatch = async () => {
     if (!jobDescription.trim()) {
       setError('Please enter a job description');
@@ -164,34 +175,12 @@ const GeneratePage: React.FC = () => {
     navigator.clipboard.writeText(text);
   };
 
-  const renderApiKeyWarning = () => {
-    if (!user?.apiKey) {
-      return (
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-          <div className="flex">
-            <div className="ml-3">
-              <p className="text-sm text-yellow-700">
-                <strong>Note:</strong> You haven't set up your OpenAI API key yet. 
-                The generation features are currently in demo mode with pre-defined responses. 
-                To use the full AI capabilities, please add your API key in the{' '}
-                <a href="/account" className="font-medium underline">Account</a> page.
-              </p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
           <div className="p-8">
             <h1 className="text-3xl font-bold text-gray-800 mb-8">Generate Content</h1>
-            
-            {renderApiKeyWarning()}
             
             {error && (
               <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">

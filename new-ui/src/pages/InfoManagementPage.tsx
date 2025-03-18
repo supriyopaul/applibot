@@ -4,11 +4,22 @@ import { useAuth } from '../contexts/AuthContext';
 import { Clipboard } from 'lucide-react';
 
 const InfoManagementPage: React.FC = () => {
-  const { savedInfo, addSavedInfo, deleteSavedInfo } = useData();
   const { user } = useAuth();
+  const { savedInfo, addSavedInfo, deleteSavedInfo } = useData();
   const [infoText, setInfoText] = useState('');
   const [error, setError] = useState('');
   const [formattedInfo, setFormattedInfo] = useState('');
+
+  // Block access if API key is not set
+  if (!user?.apiKey) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <p className="text-xl text-red-500">
+          Please update your OpenAI API key in the Account page to access Info Management.
+        </p>
+      </div>
+    );
+  }
 
   const handleFormatInfo = async () => {
     if (!infoText.trim()) {

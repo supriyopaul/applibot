@@ -209,6 +209,10 @@ async def update_openai_key(new_openai_key: str = Form(...), current_user: UserI
     db.commit()
     return {"message": "OpenAI API key updated successfully"}
 
+@app.get("/get_openai_key/")
+async def get_openai_key(current_user: UserInDB = Depends(get_current_user)):
+    return {"openai_api_key": current_user.openai_api_key}
+
 @app.post("/resume/", response_model=ResumeResponse)
 async def upload_resume(
     resume_content: str = Form(...),
