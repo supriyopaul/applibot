@@ -13,6 +13,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from langchain.prompts import PromptTemplate
 from langchain.chat_models import ChatOpenAI
+from langchain.embeddings.openai import OpenAIEmbeddings
 from applibot.utils.misc import (compute_sha256, extract_output_block,
                                  print_green, print_orange, print_purple,
                                  print_red, print_yellow)
@@ -20,12 +21,10 @@ from applibot.templates import (QUESTION_EXTRACTION_TEMPLATE, QUESTION_RESPONSE_
                                 COVER_LETTER_TEMPLATE, COVER_LETTER_FILL_TEMPLATE,
                                 DM_REPLY_TEMPLATE, DM_REPLY_FILL_TEMPLATE,
                                 EXPRESSION_OF_INTEREST_TEMPLATE, EOI_FILL_TEMPLATE,
-                                INFO_FORMATTING_TEMPLATE, DM_REPLY_FILL_TEMPLATE,
-                                ANALYSIS_TEMPLATE)
+                                INFO_FORMATTING_TEMPLATE, ANALYSIS_TEMPLATE)
 from applibot.utils.postgres_store import UserInDB, Resume
 from applibot.utils.config_loader import load_config
 from applibot.fill_appllication_form import answer_form as fill_form
-
 
 app = FastAPI()
 
@@ -43,8 +42,7 @@ config = load_config(args.config)
 db_store = config.objects.postgres_store
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=config.raw.service.token_url)
 pwd_context = CryptContext(schemes=config.raw.service.pwd_context_schemes, deprecated=config.raw.service.pwd_context_depricated)
-embedding = config.objects.embedding
-llm = config.objects.llm
+# Removed global embeddings instance.
 info_store = config.objects.info_store
 
 INFO_RETRIEVAL_LIMIT = 5
@@ -116,9 +114,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     encoded_jwt = jwt.encode(to_encode, config.raw.service.secret_key, algorithm=config.raw.service.hash_algorithm)
     return encoded_jwt
 
-async def format_and_predict(template_name, llm_instance=None, **kwargs):
-    if llm_instance is None:
-        llm_instance = llm
+async def format_and_predict(template_name, llm_instance, **kwargs):
     prompt = templates[template_name].format(**kwargs)
     print_orange(f"Formatted Prompt for {template_name.upper()}:\n")
     print_purple(prompt)
@@ -130,8 +126,8 @@ async def format_and_predict(template_name, llm_instance=None, **kwargs):
 def compute_distance(query_vector, v):
     return np.linalg.norm(np.array(v) - query_vector)
 
-async def get_relevant_info_texts(text, user_id):
-    query_vector = embedding.embed_query(text)
+async def get_relevant_info_texts(text, user_id, user_embeddings):
+    query_vector = user_embeddings.embed_query(text)
     user_info = info_store.table.to_pandas()[info_store.table.to_pandas()['user_id'] == f'{user_id}']
     distance_func = functools.partial(compute_distance, query_vector)
     user_info['distance'] = user_info['vector'].apply(distance_func)
@@ -144,6 +140,21 @@ async def fetch_latest_resume(db: Session, user_id: int):
                       .order_by(Resume.created_at.desc()) \
                       .first()
     return latest_resume.content
+
+# Helper functions to reuse repetitive code
+def get_user_llm(current_user: UserInDB):
+    if not current_user.openai_api_key:
+         raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
+    return ChatOpenAI(
+         model=config.raw.chat_model.model_name,
+         temperature=config.raw.chat_model.temperature,
+         openai_api_key=current_user.openai_api_key
+    )
+
+def get_user_embeddings(current_user: UserInDB):
+    if not current_user.openai_api_key:
+         raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
+    return OpenAIEmbeddings(openai_api_key=current_user.openai_api_key)
 
 # Dependency
 def get_current_user(db: Session = Depends(db_store.get_db), token: str = Header(...)):
@@ -273,17 +284,19 @@ async def post_info(
     info_text: str = Form(...),
     current_user: UserInDB = Depends(get_current_user)
 ):
+    user_llm = get_user_llm(current_user)
+    user_embeddings = get_user_embeddings(current_user)
     info_id = compute_sha256(info_text)
     if not info_store.table.search().where(f'user_id="{current_user.id}" AND id="{info_id}"').to_df().empty:
         raise HTTPException(
             status_code=400,
             detail=f"Record with id {info_id} and user_id {current_user.id} already exists in the table."
         )
-    formatted_info_text = await format_and_predict("info_formatting", unformatted_info=info_text)
+    formatted_info_text = await format_and_predict("info_formatting", llm_instance=user_llm, unformatted_info=info_text)
     data = {
         "text": formatted_info_text,
         "id": info_id,
-        "vector": embedding.embed_query(formatted_info_text),
+        "vector": user_embeddings.embed_query(formatted_info_text),
         "user_id": current_user.id,
     }
     
@@ -293,9 +306,7 @@ async def post_info(
 
 @app.post("/format-info/")
 async def format_info_endpoint(unformatted_info_text: str = Form(...), current_user: UserInDB = Depends(get_current_user)):
-    if not current_user.openai_api_key:
-         raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
-    user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
+    user_llm = get_user_llm(current_user)
     return await format_info_helper(unformatted_info_text, user_llm)
 
 @app.post("/questions/")
@@ -304,15 +315,13 @@ async def post_questions_route(
     current_user: UserInDB = Depends(get_current_user),
     db: Session = Depends(db_store.get_db)
 ):
-    if not current_user.openai_api_key:
-         raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
-    user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
+    user_llm = get_user_llm(current_user)
+    user_embeddings = get_user_embeddings(current_user)
     latest_resume = await fetch_latest_resume(db, current_user.id)
     extracted_questions = await format_info_helper(question, user_llm)
-    # Check if questions were successfully extracted
     if not extracted_questions.strip() or "no questions provided" in extracted_questions.lower():
          raise HTTPException(status_code=400, detail="No questions found in the provided input. Please include questions between '=====Questions start=====' and '=====Questions end====='.")
-    relevant_info_texts = await get_relevant_info_texts(extracted_questions, user_id=current_user.id)
+    relevant_info_texts = await get_relevant_info_texts(extracted_questions, user_id=current_user.id, user_embeddings=user_embeddings)
     answers = await format_and_predict("question_response", llm_instance=user_llm, questions=extracted_questions, resume=latest_resume, info_text=relevant_info_texts)
     return {"filled_form": answers}
 
@@ -338,12 +347,11 @@ async def generate_cover_letter_route(
     current_user: UserInDB = Depends(get_current_user),
     db: Session = Depends(db_store.get_db)
 ):
-    if not current_user.openai_api_key:
-         raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
-    user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
+    user_llm = get_user_llm(current_user)
+    user_embeddings = get_user_embeddings(current_user)
     latest_resume = await fetch_latest_resume(db, current_user.id)
     cover_letter_template = await format_and_predict("cover_letter", llm_instance=user_llm, job_description=job_description)
-    relevant_info_texts = await get_relevant_info_texts(cover_letter_template, user_id=current_user.id)
+    relevant_info_texts = await get_relevant_info_texts(cover_letter_template, user_id=current_user.id, user_embeddings=user_embeddings)
     cover_letter = await format_and_predict("cover_letter_fill", llm_instance=user_llm,
                                             cover_template=cover_letter_template,
                                             resume=latest_resume,
@@ -357,12 +365,11 @@ async def dm_reply_route(
     current_user: UserInDB = Depends(get_current_user),
     db: Session = Depends(db_store.get_db)
 ):
-    if not current_user.openai_api_key:
-         raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
-    user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
+    user_llm = get_user_llm(current_user)
+    user_embeddings = get_user_embeddings(current_user)
     latest_resume = await fetch_latest_resume(db, current_user.id)
     dm_response_template = await format_and_predict("dm_reply", llm_instance=user_llm, dm=dm)
-    relevant_info_texts = await get_relevant_info_texts(dm_response_template, user_id=current_user.id)
+    relevant_info_texts = await get_relevant_info_texts(dm_response_template, user_id=current_user.id, user_embeddings=user_embeddings)
     dm_response = await format_and_predict("dm_reply_fill", llm_instance=user_llm,
                                            dm_reply_template=dm_response_template,
                                            resume=latest_resume,
@@ -375,12 +382,11 @@ async def generate_eoi_route(
     current_user: UserInDB = Depends(get_current_user),
     db: Session = Depends(db_store.get_db)
 ):
-    if not current_user.openai_api_key:
-         raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
-    user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
+    user_llm = get_user_llm(current_user)
+    user_embeddings = get_user_embeddings(current_user)
     latest_resume = await fetch_latest_resume(db, current_user.id)
     eoi_template = await format_and_predict("expression_of_interest", llm_instance=user_llm, job_description=job_description)
-    relevant_info_texts = await get_relevant_info_texts(eoi_template, user_id=current_user.id)
+    relevant_info_texts = await get_relevant_info_texts(eoi_template, user_id=current_user.id, user_embeddings=user_embeddings)
     eoi = await format_and_predict("eoi_fill", llm_instance=user_llm,
                                    eoi_template=eoi_template,
                                    resume=latest_resume,
@@ -393,11 +399,10 @@ async def skill_match(
     current_user: UserInDB = Depends(get_current_user),
     db: Session = Depends(db_store.get_db)
 ):
-    if not current_user.openai_api_key:
-         raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
-    user_llm = ChatOpenAI(model=config.raw.chat_model.model_name, temperature=config.raw.chat_model.temperature, openai_api_key=current_user.openai_api_key)
+    user_llm = get_user_llm(current_user)
+    user_embeddings = get_user_embeddings(current_user)
     latest_resume = await fetch_latest_resume(db, current_user.id)
-    relevant_info_texts = await get_relevant_info_texts(job_description, user_id=current_user.id)
+    relevant_info_texts = await get_relevant_info_texts(job_description, user_id=current_user.id, user_embeddings=user_embeddings)
     analysis = await format_and_predict("analysis", llm_instance=user_llm,
                                         job_description=job_description,
                                         resume=latest_resume,
@@ -417,7 +422,6 @@ async def update_credentials(
     db.add(current_user)
     db.commit()
     return {"message": "Password updated successfully"}
-
 
 def main():
     import uvicorn

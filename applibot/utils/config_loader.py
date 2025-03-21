@@ -2,12 +2,8 @@ import yaml
 import argparse
 from pprint import pprint
 
-from langchain.chat_models import ChatOpenAI
 from applibot.utils.lancedb_store import LanceDBStore
 from applibot.utils.postgres_store import PostgresStore
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.embeddings import CacheBackedEmbeddings
-from langchain.globals import set_llm_cache
 from langchain.cache import SQLiteCache
 from langchain.storage import LocalFileStore
 
@@ -51,27 +47,6 @@ def load_config(yaml_path):
         raw_config.vector_store.lancedb.info_store.table_name,
         raw_config.vector_store.lancedb.info_store.schema
     )
-
-    # Load chat-model
-    set_llm_cache(SQLiteCache(database_path=llm_cache_path))
-    config_objects.llm = ChatOpenAI(
-        openai_api_key=raw_config.chat_model.key,
-        model=raw_config.chat_model.model_name,
-        temperature=raw_config.chat_model.temperature,
-        cache=bool(raw_config.chat_model.cache),
-    )
-
-    # Load embeddings-model (assuming OpenAIEmbeddings is the only option for now)
-    cache_embeddings=bool(raw_config.embeddings_model.cache)
-    underlying_embeddings = OpenAIEmbeddings(openai_api_key=raw_config.embeddings_model.key)
-    fs = LocalFileStore(embeddings_cache_path)
-    cached_embedder = CacheBackedEmbeddings.from_bytes_store(
-        underlying_embeddings, fs, namespace=underlying_embeddings.model
-    )
-    if cache_embeddings:
-        config_objects.embedding = underlying_embeddings
-    else:
-        config_objects.embedding = cached_embedder
 
     # Load service details
     config_objects.service = AttributeDict()
