@@ -333,15 +333,13 @@ Based on the provided Recruiter's Direct Message:
 {dm}
 =====DM end=====
 Generate a response that addresses the recruiter's message while highlighting the applicant's fit for the mentioned position.
-The output should be within a well-defined block with placeholders for the applicant's name,
-and the answers to questions that the recruiter has asked (if any).
-Make the template so that it can be filled under 1000 characters.
-Rather than paragraphs make it bullet short points wherever you can.
-Do not include any unnecessary placeholders whose information wouldn't be relevant in making the Expression of Interest short, crisp and precise.
-Your output should inside the block as mentioned below:
+The output should be within a well-defined block with placeholders for the applicant's name and for any answers to questions asked.
+Ensure that the response is under 1000 characters and uses plain text bullet points (do not use markdown formatting such as asterisks, underscores, or hash symbols).
+Do not include any unnecessary placeholders.
+The final output must strictly follow this format:
 =====DM Response start=====
-Hi [Recruiter's name if present in DM],
-[Template for replying to the dm]
+Hi [Recruiter's Name if present in DM],
+[Response content]
 =====DM Response end=====
 """
 
@@ -358,16 +356,14 @@ From the user's information:
 {info_text}
 =====Info end=====
 
-Use the resume and info text to fill in the placeholders within the response template.
-Do not lie about anything. Remove points for which information not present in the above resume and information. 
-Make sure to make it under 1000 characters. Short and precise.
-Rather than paragraphs make it bullet short points wherever you can.
-Your output should be:
-
+Fill in the placeholders using the resume and info text. Do not fabricate any information and remove points for which data is not provided.
+Ensure the output is under 1000 characters, uses plain text bullet points (no markdown formatting), and avoids unnecessary placeholders.
+The final output must strictly follow this format:
 =====Response start=====
-[Filled up EOI template based on the provided user information]
+[Fully filled Expression of Interest based on the provided user information]
 =====Response end=====
 """
+
 
 
 EXPRESSION_OF_INTEREST_TEMPLATE = """

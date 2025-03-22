@@ -45,7 +45,7 @@ pwd_context = CryptContext(schemes=config.raw.service.pwd_context_schemes, depre
 # Removed global embeddings instance.
 info_store = config.objects.info_store
 
-INFO_RETRIEVAL_LIMIT = 5
+INFO_RETRIEVAL_LIMIT = 8
 ALL_INFO_LIMIT = 1000
 
 templates = {
@@ -318,12 +318,13 @@ async def post_questions_route(
     user_llm = get_user_llm(current_user)
     user_embeddings = get_user_embeddings(current_user)
     latest_resume = await fetch_latest_resume(db, current_user.id)
-    extracted_questions = await format_info_helper(question, user_llm)
+    extracted_questions = await format_and_predict("question_extraction", llm_instance=user_llm, unformatted_info=question)
     if not extracted_questions.strip() or "no questions provided" in extracted_questions.lower():
          raise HTTPException(status_code=400, detail="No questions found in the provided input. Please include questions between '=====Questions start=====' and '=====Questions end====='.")
     relevant_info_texts = await get_relevant_info_texts(extracted_questions, user_id=current_user.id, user_embeddings=user_embeddings)
     answers = await format_and_predict("question_response", llm_instance=user_llm, questions=extracted_questions, resume=latest_resume, info_text=relevant_info_texts)
-    return {"filled_form": answers}
+    formatted_answers = await format_info_helper(answers, user_llm)
+    return {"filled_form": formatted_answers}
 
 @app.get("/users/infos/")
 async def get_user_infos(
