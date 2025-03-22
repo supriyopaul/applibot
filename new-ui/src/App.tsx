@@ -12,6 +12,9 @@ import ResumeManagementPage from './pages/ResumeManagementPage';
 import InfoManagementPage from './pages/InfoManagementPage';
 import AccountPage from './pages/AccountPage';
 import GeneratePage from './pages/GeneratePage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import { Instagram, Github, Linkedin } from 'lucide-react';
 
 function App() {
   return (
@@ -26,6 +29,8 @@ function App() {
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route 
                   path="/resume-management" 
                   element={
@@ -60,12 +65,34 @@ function App() {
                 />
               </Routes>
             </main>
-            <footer className="bg-gray-800 text-white py-6">
+            <footer className="bg-gray-800 text-white py-3">
               <div className="container mx-auto px-4 text-center">
-                <p>&copy; {new Date().getFullYear()} Applibot. All rights reserved.</p>
-                <p className="text-gray-400 text-sm mt-2">
-                  Powered by Retrieval Augmented Generation (RAG) technology
-                </p>
+                <div className="flex justify-center space-x-10">
+                  <a 
+                    href="https://www.instagram.com/the_same_supriyo/" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="hover:text-gray-400"
+                  >
+                    <Instagram size={20} />
+                  </a>
+                  <a 
+                    href="https://github.com/supriyopaul" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="hover:text-gray-400"
+                  >
+                    <Github size={20} />
+                  </a>
+                  <a 
+                    href="https://www.linkedin.com/in/supriyopaul95/" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="hover:text-gray-400"
+                  >
+                    <Linkedin size={20} />
+                  </a>
+                </div>
               </div>
             </footer>
           </div>

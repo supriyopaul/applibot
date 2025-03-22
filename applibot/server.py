@@ -25,6 +25,7 @@ from applibot.templates import (QUESTION_EXTRACTION_TEMPLATE, QUESTION_RESPONSE_
 from applibot.utils.postgres_store import UserInDB, Resume
 from applibot.utils.config_loader import load_config
 from applibot.fill_appllication_form import answer_form as fill_form
+from applibot.utils.email_sender import send_reset_email
 
 app = FastAPI()
 
@@ -42,7 +43,6 @@ config = load_config(args.config)
 db_store = config.objects.postgres_store
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=config.raw.service.token_url)
 pwd_context = CryptContext(schemes=config.raw.service.pwd_context_schemes, deprecated=config.raw.service.pwd_context_depricated)
-# Removed global embeddings instance.
 info_store = config.objects.info_store
 
 INFO_RETRIEVAL_LIMIT = 8
@@ -61,7 +61,6 @@ templates = {
     "analysis": PromptTemplate(input_variables=["job_description", "resume", "info_text"], template=ANALYSIS_TEMPLATE)
 }
 
-# Pydantic models for requests & responses
 class User(BaseModel):
     email: str
     password: str
@@ -78,7 +77,6 @@ class ResumeResponse(BaseModel):
     content: str
     created_at: datetime
 
-# Utility functions
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
@@ -141,7 +139,6 @@ async def fetch_latest_resume(db: Session, user_id: int):
                       .first()
     return latest_resume.content
 
-# Helper functions to reuse repetitive code
 def get_user_llm(current_user: UserInDB):
     if not current_user.openai_api_key:
          raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
@@ -156,7 +153,6 @@ def get_user_embeddings(current_user: UserInDB):
          raise HTTPException(status_code=400, detail="Please update your OpenAI API key before generating responses.")
     return OpenAIEmbeddings(openai_api_key=current_user.openai_api_key)
 
-# Dependency
 def get_current_user(db: Session = Depends(db_store.get_db), token: str = Header(...)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -179,7 +175,6 @@ def get_current_user(db: Session = Depends(db_store.get_db), token: str = Header
 async def format_info_helper(unformatted_info_text: str, user_llm):
     return await format_and_predict("info_formatting", llm_instance=user_llm, unformatted_info=unformatted_info_text)
 
-# API endpoints
 @app.post("/token", response_model=Token)
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
@@ -299,7 +294,6 @@ async def post_info(
         "vector": user_embeddings.embed_query(formatted_info_text),
         "user_id": current_user.id,
     }
-    
     info_store.table.add([data])
     del data['vector']
     return data
@@ -423,6 +417,59 @@ async def update_credentials(
     db.add(current_user)
     db.commit()
     return {"message": "Password updated successfully"}
+
+@app.post("/forgot_password/")
+async def forgot_password(email: str = Form(...), db: Session = Depends(db_store.get_db)):
+    user = get_user(db, email)
+    if not user:
+        return {"message": "If an account with that email exists, a password reset link has been sent."}
+    reset_token_expires = timedelta(minutes=15)
+    reset_token = jwt.encode(
+        {"sub": user.email, "reset": True, "exp": datetime.utcnow() + reset_token_expires},
+        config.raw.service.secret_key,
+        algorithm=config.raw.service.hash_algorithm
+    )
+    reset_url_base = getattr(config.raw.service, 'reset_url_base')
+    reset_url = f"{reset_url_base}?token={reset_token}"
+    if hasattr(config.raw, 'email'):
+        email_config = config.raw.email
+        try:
+            send_reset_email(
+                to_email=user.email,
+                reset_url=reset_url,
+                smtp_server=email_config.smtp_server,
+                smtp_port=email_config.smtp_port,
+                smtp_user=email_config.smtp_user,
+                smtp_password=email_config.smtp_password,
+                from_email=getattr(email_config, 'from_email', email_config.smtp_user)
+            )
+            return {"message": "Password reset link sent via email."}
+        except Exception as e:
+            print(f"Error sending email: {e}")
+            return {"message": "Failed to send password reset email."}
+    else:
+        return {"message": "Email configuration not found. Reset URL: " + reset_url}
+
+@app.post("/reset_password/")
+async def reset_password(token: str = Form(...), new_password: str = Form(...), confirm_password: str = Form(...), db: Session = Depends(db_store.get_db)):
+    if new_password != confirm_password:
+        raise HTTPException(status_code=400, detail="Passwords do not match")
+    try:
+        payload = jwt.decode(token, config.raw.service.secret_key, algorithms=[config.raw.service.hash_algorithm])
+        if not payload.get("reset"):
+            raise HTTPException(status_code=400, detail="Invalid token")
+        email = payload.get("sub")
+        if email is None:
+            raise HTTPException(status_code=400, detail="Invalid token payload")
+    except JWTError:
+        raise HTTPException(status_code=400, detail="Invalid or expired token")
+    user = get_user(db, email)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    user.hashed_password = get_password_hash(new_password)
+    db.add(user)
+    db.commit()
+    return {"message": "Password has been reset successfully"}
 
 def main():
     import uvicorn

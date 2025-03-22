@@ -77,7 +77,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         body: JSON.stringify({ email, password }),
       });
       if (!response.ok) throw new Error('Signup failed');
-      // After signup, log in the user
       return await login(email, password);
     } catch (err) {
       return false;
@@ -136,8 +135,48 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const forgotPassword = async (email: string) => {
+    try {
+      const response = await fetch('http://0.0.0.0:9000/forgot_password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          email: email,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to initiate password reset');
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      return false;
+    }
+  };
+
+  const resetPassword = async (token: string, newPassword: string, confirmPassword: string) => {
+    try {
+      const response = await fetch('http://0.0.0.0:9000/reset_password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          token: token,
+          new_password: newPassword,
+          confirm_password: confirmPassword,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to reset password');
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      return false;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, updateCredentials, updateApiKey }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, updateCredentials, updateApiKey, forgotPassword, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );
